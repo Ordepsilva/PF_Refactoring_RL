@@ -7,7 +7,7 @@ const routes = require('./routes/general_routes');
 
 app.use(cors());
 app.use(bodyparser.json());
-app.use(require('./database/database'));
+
 
 //Routes
 app.use('/', routes);

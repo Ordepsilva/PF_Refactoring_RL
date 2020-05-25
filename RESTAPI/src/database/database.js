@@ -9,8 +9,4 @@ const instance = new Neode('bolt://localhost:7687',
 user, password);
 
 // Express middleware
-module.exports = function(req, res, next) {
-    req.instance = instance;
-    
-    next();
-};
+module.exports = instance;
