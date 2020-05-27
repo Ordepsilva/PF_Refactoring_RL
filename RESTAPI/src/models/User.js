@@ -2,7 +2,7 @@ const instance = require('../database/database');
 /**
  * User model
  */
-const userModel = instance.model('User', {
+const userModel = instance.model('Utilizadores', {
     username: {
         type: 'name',
         unique: true,

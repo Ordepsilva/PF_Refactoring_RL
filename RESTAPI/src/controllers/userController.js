@@ -47,23 +47,27 @@ userController.login = async (req, res) => {
  * Método responsável por efetuar o registo de um user
  */
 userController.register = async (req, res) => {
+    let bdusername;
+    let id;
+
     /*Valida a estrutuda do body recebido */
     const { error } = registerValidation(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
     const person = req.body;
-
     /*Verifica se o username já existe */
-    const findeduser = await User.find({ username: req.body.username });
+    const findeduser = await User.find(req.body.username);
     /*Se existir retorna uma mensagem de erro */
-    if (!findeduser) {
+    if (findeduser) {
         return res.status(400).send('Username is already in use!')
     }
 
+
     try {
         /*É Encriptada a password */
-        const hash = await bcrypt.hash(password, 10);
+        const hash = await bcrypt.hash(person.password, 10);
+        console.log(person.password);
         person.password = hash;
         /*Tenta criar o utilizador na base de dados */
         const user = await User.create(person);
@@ -71,8 +75,12 @@ userController.register = async (req, res) => {
         if (user) {
             /*Se o utilizador for criado com sucesso , a password é omitida */
             person.password = undefined;
+            /*Caso exista recebe as informações do user criado*/
+            bdusername = user.get('username');
+            id = user.get('id');
+
             /*É gerado um novo token para o user */
-            const token = jwt.sign({ id: findeduser.id, username: findeduser.username }, authconfig.secret);
+            const token = jwt.sign({ id: id, username: bdusername }, authconfig.secret);
             /*Retorna uma mensagem de sucesso com os dados do user criado e o token*/
             return res.status(200).send({ person, AuthToken: token });
         }
