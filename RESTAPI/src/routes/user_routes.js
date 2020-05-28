@@ -9,5 +9,4 @@ router.post('/login', userController.login);
 /*Rota responsável por efetuar o Registo*/
 router.post('/register', userController.register);
 
-
 module.exports = router;

@@ -92,11 +92,4 @@ userController.register = async (req, res) => {
     }
 }
 
-/**
- * Método responsável por efetuar o logout
- */
-userController.logout = async (req, res) => {
-    /*Retorna uma mensagem de sucesso quando o utilizador efetua o logout e limpa as cookies existentes. */
-    return res.status(200).clearCookie('authToken').send('Success!');
-}
 module.exports = userController;
