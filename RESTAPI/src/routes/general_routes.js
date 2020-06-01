@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userRoutes = require('./user_routes');
+const projRoutes = require('./project_routes');
 const instance = require ('../database/database');
 router.get("/", function(req, res){
     res.send("It's running");
@@ -13,7 +14,6 @@ router.get('/teste', (req, res) => {
     instance.readCypher(cypher)
         .then(result => {
 
-            result.records[0].get('n');
             var results = [];
 
             for (var i = 0; i < result.records.length; i++) {
@@ -32,5 +32,7 @@ router.get('/teste', (req, res) => {
         });
 });
 
+
 router.use("/auth", userRoutes);
+router.use("/project", projRoutes );
 module.exports = router;
