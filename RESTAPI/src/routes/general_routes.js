@@ -13,7 +13,6 @@ router.get('/teste', (req, res) => {
 
     instance.readCypher(cypher)
         .then(result => {
-
             var results = [];
 
             for (var i = 0; i < result.records.length; i++) {

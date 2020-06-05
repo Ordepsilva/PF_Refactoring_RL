@@ -67,7 +67,6 @@ userController.register = async (req, res) => {
     try {
         /*É Encriptada a password */
         const hash = await bcrypt.hash(person.password, 10);
-        console.log(person.password);
         person.password = hash;
         /*Tenta criar o utilizador na base de dados */
         const user = await User.create(person);
@@ -82,7 +81,8 @@ userController.register = async (req, res) => {
             /*É gerado um novo token para o user */
             const token = jwt.sign({ id: id, username: bdusername }, authconfig.secret);
             /*Retorna uma mensagem de sucesso com os dados do user criado e o token*/
-            return res.status(200).send({ person, AuthToken: token });
+            return res.status(200).cookie('authToken', token, { expires: new Date(Date.now + 10 * 60000), httpOnly: true }).send({ AuthToken: token });
+
         }
 
     } catch (err) {
@@ -90,6 +90,14 @@ userController.register = async (req, res) => {
         console.log(err);
         return res.json(err);
     }
+}
+/**Método responsável por retornar as informações do user autenticado */
+userController.getUserInfo = async (req, res) => {
+
+    username = req.auth.username;
+    console.log(username);
+    res.send({username});
+
 }
 
 module.exports = userController;
