@@ -12,6 +12,12 @@ const projModel = instance.model('Projeto', {
     description: {
         type: 'string',
     },
+
+    subject: {
+        type:'string',
+        required:true
+    }
+    ,
     project_id: {
         type: 'uuid',
         unique: true,
