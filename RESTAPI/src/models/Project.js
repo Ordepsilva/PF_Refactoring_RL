@@ -6,7 +6,6 @@ const projModel = instance.model('Projeto', {
     project_name: {
         type: 'name',
         unique: true,
-        primary: true,
         required: true // Creates a Unique Constraint
     },
     description: {
@@ -21,6 +20,7 @@ const projModel = instance.model('Projeto', {
     project_id: {
         type: 'uuid',
         unique: true,
+        primary:true,
         required: true
     },
     createdAt: {

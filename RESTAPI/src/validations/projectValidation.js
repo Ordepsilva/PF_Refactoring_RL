@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 
-//Validate Login
+//Validate Project
 
 const projectCreation = data =>{
     const schema = Joi.object({
