@@ -20,13 +20,21 @@ projController.createProject = async (req, res) => {
         //Tenta criar o projeto
         const project = await Project.create(req.body);
 
+
         console.log(project);
         //Se o projeto e o user existirem , cria uma relação entre eles
         if (project && user) {
+            var obj = {};
+            obj.project_name=  project.get('project_name');
+            obj.description = project.get('description');
+            obj.project_id = project.get('project_id');
+            obj.subject = project.get('subject');
+            dateobj= project.get('createdAt');
+            obj.date = dateobj.day + "/" + dateobj.month + "/" + dateobj.year;
             const project_id = project.get('project_id');
             const query = "MATCH (a:Utilizadores),(b:Projeto)  WHERE a.username ='" + req.auth.username + "' and b.project_id = '" + project_id + "' CREATE (b)-[x:PERTENCE]->(a)";
             instance.writeCypher(query);
-            return res.status(200).json({ success: "Projeto criado com sucesso" });
+            return res.status(200).json({ success: "Projeto criado com sucesso", obj });
         }
 
     } catch (err) {
@@ -80,7 +88,7 @@ projController.editProject = async (req, res) => {
         if (projectToUpdate) {
             //Efetua o update do projeto 
             await projectToUpdate.update(req.body);
-            return res.status(200).send("Success");
+            return res.status(200).json({response:"Success"});
         }
     } catch (err) {
         console.log(err);
@@ -95,7 +103,7 @@ projController.deleteProject = async (req, res) => {
         console.log(projectTodelete);
         if (projectTodelete) {
             await projectTodelete.delete();
-            return res.status(200).send("The project was deleted");
+            return res.status(200).json({result:"Project was deleted!"});
         } else {
             return res.status(400).send("Problem occurred while deleting");
         }
