@@ -1,0 +1,144 @@
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin:0;
+} 
+.sidenav {
+    height: 100%;
+    width:200px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    display: flex;
+    background-color:darkslategray;
+    overflow:none;
+    justify-content:center;/* center items vertically, in this case */
+  align-items: center;
+    border-right: 2px solid lightgray;
+}
+.align_project_button{
+    width: 200px;
+    position: fixed;
+    justify-content: center
+    ;
+    display: inline-flex;
+   /* margin-top: 2.5%;*/
+}
+
+ h3{
+    margin: unset ;
+}
+
+.div_sidenav_box{
+    width: 100%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding: 0 20px;
+    color: white;
+    cursor: pointer;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-top-left-radius: 15px;
+  
+  }
+  
+.div_sidenav_box:hover{
+    background-color: white;
+    color: darkslategray;  
+}
+.div_sidenav_box:focus{
+    outline: none;
+}
+
+
+.item_sidenav_box:hover{
+    color: darkslategray;
+}
+
+.sidebar-footer{
+    height: 10%;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #003C3C;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.user_footer{
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.user_footer_box{
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 0 20px;
+    cursor: pointer;
+}
+::ng-deep.mat-menu-panel {
+    max-width: none !important;
+    width: 200px;
+   
+  }
+
+.main {
+    margin-left: 210px; /* Same as the width of the sidenav */
+    width: auto;
+    /*display: grid;*/
+    align-items: center;
+    height: 100%;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;
+        justify-content: center;
+        align-items: center;}
+    .sidenav a {font-size: 15px; float: none; justify-content: center;
+        align-items: center;  width: 20%;}
+        .sidebar-footer{
+          width: 50%;
+         height: 100%;
+         position: unset;
+         padding: unset;
+        }
+        .sidenav{
+          justify-content: space-between;
+        }
+}
+@media screen and (max-width: 700px) {
+    .sidenav {
+      width: 100%;
+      height: 10%;
+      position: relative;
+     
+    }
+    .sidenav a {float: left;
+        justify-content: center;
+        align-items: center;font-size: 15px; width: 20%;}
+
+    div.main {margin-left: 0;}
+
+    .sidebar-footer{
+      width: 50%;
+     height: 100%;
+     position: unset;
+    }
+    .user_footer_box{
+      padding: unset;
+      height: 100%;
+      width: 50%;
+    }
+    .div_sidenav_box{
+      padding: unset;
+    }
+}
