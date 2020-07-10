@@ -1,12 +1,10 @@
 const instance = require('../database/database');
-/**
- * Project Model
- */
+
 const projModel = instance.model('Projeto', {
     project_name: {
         type: 'name',
         unique: true,
-        required: true // Creates a Unique Constraint
+        required: true 
     },
     description: {
         type: 'string',

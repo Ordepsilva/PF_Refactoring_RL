@@ -1,13 +1,11 @@
 const instance = require('../database/database');
-/**
- * User model
- */
+
 const userModel = instance.model('Utilizadores', {
     username: {
         type: 'name',
         unique: true,
         primary: true,
-        required: true // Creates a Unique Constraint
+        required: true 
     },
     id: {
         type: 'uuid',
