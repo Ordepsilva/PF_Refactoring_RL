@@ -9,11 +9,6 @@ const articleModel = instance.model('Article', {
     abstract: {
         type: 'string',
     },
-    articleID: {
-        type: 'uuid',
-        required: true,
-        primary: 'true'
-    },
     doi: {
         type: 'string',
         unique: true,
