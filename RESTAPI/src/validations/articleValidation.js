@@ -28,6 +28,11 @@ const editArticle = data =>{
     });
     return schema.validate(data);
 }
-
+const commentCreation = data =>{
+    const schema = Joi.object({
+        commentary: Joi.string().required()
+    });
+    return schema.validate(data);
+}
 module.exports.articleCreation = articleCreation;
 

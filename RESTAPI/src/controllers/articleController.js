@@ -1,19 +1,16 @@
 const instance = require('../database/database');
 const Project = require('../models/Project');
 const Article = require('../models/Article');
+const Comment = require('../models/Comment');
 const { articleCreation } = require('../validations/articleValidation');
-const { Relationship } = require('neode');
 const articleController = {};
 
 /** 
 articleController.createArticle = async (req, res) => {
+    
     console.log(req.body);
     let objArticle = {};
     objArticle.info = req.body;
-
-    let article = await Article.create(req.body);
-    console.log(article);
-
 
     const queryCreateArticle = "CREATE (n:Article $info) RETURN n";
 
@@ -23,7 +20,7 @@ articleController.createArticle = async (req, res) => {
         if (project) {
             instance.writeCypher(queryCreateArticle, objArticle).then(result => {
                 if (result) {
-                    console.log(result.records[0].get(0));
+
                     let node = result.records[0].get(0);
                     let articleId = node.identity.low;
                     console.log("Id:" + articleId);
@@ -40,6 +37,7 @@ articleController.createArticle = async (req, res) => {
     }
 }
 */
+
 articleController.createArticle = async (req, res) => {
     const { error } = articleCreation(req.body);
     if (error) {
@@ -65,7 +63,6 @@ articleController.createArticle = async (req, res) => {
 }
 
 articleController.relateArticlesByID = async (req, res) => {
-
     const articleID = req.params.articleID;
     const articleToRelateID = req.body.articleID;
     const relationName = req.body.relationName;
@@ -88,7 +85,6 @@ articleController.relateArticlesByID = async (req, res) => {
                 return res.status(200).json({ sucess: "Relation created" });
             }
         });
-
     } catch (err) {
         console.log(err);
         return res.json(err);
@@ -96,8 +92,8 @@ articleController.relateArticlesByID = async (req, res) => {
 }
 
 articleController.getArticleInfoByID = async (req, res) => {
-
     const query = "MATCH (b:Article) WHERE ID(b)=" + req.params.articleID + " RETURN b";
+
     try {
         instance.readCypher(query).then(result => {
             let article = {};
@@ -138,4 +134,52 @@ articleController.getArticlesFromProjectID = async (req, res) => {
     }
 }
 
+articleController.addComentToArticleByID = async (req, res) => {
+    const articleID = params.req.articleID;
+
+    const { error } = commentCreation(req.body);
+    if (error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    try {
+        const commentCreated = await Comment.create(req.body);
+        if (commentCreated) {
+            let comment = {};
+            const commentID = commentCreated.identity().low;
+            const queryAddCommentToArticle = "MATCH (a:Article),(b:Comment) WHERE ID(a)=" + articleID + " and ID(b)=" + commentID + " CREATE (a)-[x:HAS]->(b)";
+            instance.writeCypher(queryAddCommentToArticle);
+            comment.commentID = commentID;
+            comment = commentCreated.properties();
+            return res.status(200).json({ sucess: "Comment Created", comment });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
+
+}
+
+articleController.editArticle = async (req, res) => {
+
+}
+
+articleController.deleteArticle = async (req, res) => {
+    try {
+        articleTodelete = await Article.find(req.params.articleID);
+        if (articleTodelete) {
+            await articleTodelete.delete();
+            return res.status(200).json({ result: "Project was deleted!" });
+        } else {
+            return res.status(400).send("Problem occurred while deleting");
+        }
+    } catch (err) {
+        console.log(err);
+        return res.send(err);
+    }
+}
+
+articleController.relateOneToMany = async (req, res) => {
+
+}
 module.exports = articleController;
