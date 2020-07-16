@@ -5,6 +5,7 @@ import { RegistoComponent } from './components/authentication/registo/registo.co
 import { AuthGuardService } from './services/AuthGuard.service';
 import { SideNavComponent } from './components/MainComponent/side-nav/side-nav.component';
 import { ProjectsComponent } from './components/MainComponent/projects/projects.component';
+import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
 
 
 const routes: Routes = [
@@ -12,10 +13,12 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistoComponent },
   {
-    path: 'home', component: SideNavComponent,
-    children: [{ path: '', component: ProjectsComponent }], canActivate: [AuthGuardService]
+    path: '', component: SideNavComponent,
+    children: [
+      { path: 'home', component: ProjectsComponent },
+      { path: 'projectHome', component: ProjectHomeComponent }],
+      canActivate: [AuthGuardService]
   }
-  
 ];
 
 @NgModule({
