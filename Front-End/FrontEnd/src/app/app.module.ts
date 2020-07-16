@@ -33,7 +33,7 @@ import { MatTableModule } from '@angular/material/table';
 import { dataService } from './services/dataService';
 import { InfoDialogComponent } from './components/MainComponent/info-dialog/info-dialog.component';
 import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
-
+import {MatTabsModule} from '@angular/material/tabs';
 @NgModule({
   declarations: [
     AppComponent,
@@ -68,7 +68,8 @@ import { ProjectHomeComponent } from './components/MainComponent/project-home/pr
     MatPaginatorModule,
     MatTableModule,
     MatMenuModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatTabsModule
   ],
   providers: [AuthenticationServiceService, ProjectsService, dataService,  { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true }],
   bootstrap: [AppComponent]

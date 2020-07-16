@@ -10,9 +10,9 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./side-nav.component.css']
 })
 export class SideNavComponent implements OnInit {
-  username = {};
-  user = new User();
 
+  user = new User();
+  username: string;
   constructor(public authservice: AuthenticationServiceService, private router: Router) { }
 
   ngOnInit(): void {
@@ -20,6 +20,7 @@ export class SideNavComponent implements OnInit {
       this.authservice.getuserinfo().subscribe(
         (result: any) => {
           this.user = result;
+          console.log(result);
           this.username = this.user.username;
         },
         (err: HttpErrorResponse) => {
@@ -29,8 +30,8 @@ export class SideNavComponent implements OnInit {
     }
   }
 
-   /**Função responsável por efetuar o logout*/
-   logout() {
+  /**Função responsável por efetuar o logout*/
+  logout() {
     try {
       localStorage.removeItem('token');
       this.router.navigate(["/login"]);

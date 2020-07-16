@@ -133,6 +133,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   ver(row:any){
-    alert(JSON.stringify(row));
+    this.router.navigate(["/projectHome"]);
   }
 }

@@ -1,1 +1,37 @@
-<p>project-home works!</p>
+<!---->
+<div class="grid-row-1">
+</div>
+<div class="grid-row-2">
+    <div class="row2-1">
+        <span>{{project_name}}</span>
+        <button routerLink="/home" (click)=" project_info()" class="row2-button"><span>About this project</span></button>
+    </div>
+    <div class="row2-2">
+        <span>Here's the list of all your articles.</span>
+    </div>
+</div>
+<div class="grid-row-3">
+    <div class="search-hero">
+        <div class="search_text_icon">
+            <mat-icon style=" color: black; " aria-hidden="true">search</mat-icon>
+            <input class="search_input" #input placeholder="Search for something...">
+        </div>
+    </div>
+    <div class="colmn3 ">
+        <div class="table-container">
+            
+            <div *ngIf="!isloaded" class="spinner">
+                <mat-spinner></mat-spinner>
+            </div>
+            <mat-tab-group animationDuration="2000ms">
+                <!-- #enddocregion slow-animation-duration -->
+                <mat-tab label="Articles List">Content 1</mat-tab>
+                <mat-tab label="Visualization">Content 2</mat-tab>
+            </mat-tab-group>
+            
+        </div>
+    </div>
+    
+</div>
+<div class="grid-row-4">
+</div>
