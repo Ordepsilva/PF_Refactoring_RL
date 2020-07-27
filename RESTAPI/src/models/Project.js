@@ -1,24 +1,17 @@
 const instance = require('../database/database');
 
-const projModel = instance.model('Projeto', {
+const projModel = instance.model('Project', {
     project_name: {
         type: 'name',
         unique: true,
-        required: true 
+        required: true,
+        primary:true
     },
     description: {
         type: 'string',
     },
-
     subject: {
-        type:'string',
-        required:true
-    }
-    ,
-    project_id: {
-        type: 'uuid',
-        unique: true,
-        primary:true,
+        type: 'string',
         required: true
     },
     createdAt: {

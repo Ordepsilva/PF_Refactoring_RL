@@ -10,11 +10,12 @@ userController.login = async (req, res) => {
     let bdpassword;
     let id;
     const { error } = loginValitadion(req.body);
+
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
-    const findeduser = await User.find(req.body.username);
 
+    const findeduser = await User.find(req.body.username);
     if (!findeduser) {
         return res.status(400).send('Wrong username');
     } else {
@@ -34,20 +35,17 @@ userController.login = async (req, res) => {
     return res.status(200).cookie('authToken', token, { expires: new Date(Date.now + 10 * 60000), httpOnly: true }).send({ AuthToken: token });
 }
 
-/**
- * Método responsável por efetuar o registo de um user
- */
 userController.register = async (req, res) => {
     let bdusername;
     let id;
+    const person = req.body;
 
     const { error } = registerValidation(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
-    const person = req.body;
+    
     const findeduser = await User.find(req.body.username);
-
     if (findeduser) {
         return res.status(400).send('Username is already in use!')
     }
@@ -55,8 +53,8 @@ userController.register = async (req, res) => {
     try {
         const hash = await bcrypt.hash(person.password, 10);
         person.password = hash;
-
         const user = await User.create(person);
+        
         if (user) {
             person.password = undefined;
             bdusername = user.get('username');
@@ -72,7 +70,7 @@ userController.register = async (req, res) => {
 
 userController.getUserInfo = async (req, res) => {
     username = req.auth.username;
-    res.send({username});
+    res.send({ username });
 }
 
 module.exports = userController;

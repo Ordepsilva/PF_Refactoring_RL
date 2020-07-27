@@ -10,7 +10,7 @@ const projectCreation = data =>{
     return schema.validate(data);
 }
 
-const projectedit = data =>{
+const projectEdit = data =>{
     const schema = Joi.object({
         project_name: Joi.string().required(),
         subject: Joi.string().required(),
@@ -20,4 +20,4 @@ const projectedit = data =>{
 }
 
 module.exports.projectCreation = projectCreation;
-module.exports.projectedit = projectedit;
+module.exports.projectEdit = projectEdit;

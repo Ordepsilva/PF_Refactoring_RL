@@ -35,4 +35,6 @@ const commentCreation = data =>{
     return schema.validate(data);
 }
 module.exports.articleCreation = articleCreation;
+module.exports.commentCreation = commentCreation;
+module.exports.editArticle = editArticle;
 
