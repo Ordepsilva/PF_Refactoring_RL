@@ -15,39 +15,34 @@ projController.createProject = async (req, res) => {
         return res.status(400).send(error.details[0].message);
     }
 
-    try {
-        const findedProject = await Project.find(project_name);
-        if (findedProject) {
-            return res.status(400).json({ error: "Project name already exists!" });
+    const findedProject = await Project.find(project_name);
+    if (findedProject) {
+        return res.status(400).json({ error: "Project name already exists!" });
+    } else {
+        try {
+            const project = await Project.create(req.body);
+            if (project && user) {
+                const project_id = project.identity().low;
+                const queryConnectRelationsNodeToProject = "MATCH (n:Project) WHERE ID(n)=" + project_id + " CREATE (n)-[:HAS_RELATIONS]->(a:Relations {name:'Relations'})";
+                const queryToRelateProjectToUser = "MATCH (a:User),(b:Project)  WHERE a.username ='" + username + "' and ID(b) = " + project_id + " CREATE (a)-[x:OWN]->(b)";
+                const articleCreated = {};
+
+                articleCreated.project_name = project.get('project_name');
+                articleCreated.description = project.get('description');
+                articleCreated.project_id = project_id;
+                articleCreated.subject = project.get('subject');
+                dateobj = project.get('createdAt');
+                articleCreated.date = dateobj.day + "/" + dateobj.month + "/" + dateobj.year;
+
+                instance.writeCypher(queryToRelateProjectToUser);
+                instance.writeCypher(queryConnectRelationsNodeToProject);
+
+                return res.status(200).json({ success: "Project created successfully", articleCreated });
+            }
+        } catch (err) {
+            console.log(err);
+            return res.json(err);
         }
-    } catch (err) {
-        console.log(err);
-        return res.json(err);
-    }
-
-    try {
-        const project = await Project.create(req.body);
-        if (project && user) {
-            const project_id = project.identity().low;
-            const queryConnectRelationsNodeToProject = "MATCH (n:Project) WHERE ID(n)=" + project_id + " CREATE (n)-[:HAS_RELATIONS]->(a:Relations {name:'Relations'})";
-            const queryToRelateProjectToUser = "MATCH (a:User),(b:Project)  WHERE a.username ='" + username + "' and ID(b) = " + project_id + " CREATE (b)-[x:OWN]->(a)";
-            const articleCreated = {};
-
-            articleCreated.project_name = project.get('project_name');
-            articleCreated.description = project.get('description');
-            articleCreated.project_id = project_id;
-            articleCreated.subject = project.get('subject');
-            dateobj = project.get('createdAt');
-            articleCreated.date = dateobj.day + "/" + dateobj.month + "/" + dateobj.year;
-
-            instance.writeCypher(queryToRelateProjectToUser);
-            instance.writeCypher(queryConnectRelationsNodeToProject);
-
-            return res.status(200).json({ success: "Project created successfully", articleCreated });
-        }
-    } catch (err) {
-        console.log(err);
-        return res.json(err);
     }
 }
 

@@ -2,7 +2,7 @@ const instance = require('../database/database');
 const Project = require('../models/Project');
 const Article = require('../models/Article');
 const Comment = require('../models/Comment');
-const { articleCreation, commentCreation } = require('../validations/articleValidation');
+const { articleCreation, commentCreation, editArticleValidation } = require('../validations/articleValidation');
 const articleController = {};
 
 /** 
@@ -20,7 +20,6 @@ articleController.createArticle = async (req, res) => {
         if (project) {
             instance.writeCypher(queryCreateArticle, objArticle).then(result => {
                 if (result) {
-
                     let node = result.records[0].get(0);
                     let articleId = node.identity.low;
                     console.log("Id:" + articleId);
@@ -40,29 +39,41 @@ articleController.createArticle = async (req, res) => {
 
 articleController.createArticle = async (req, res) => {
     const project_id = req.params.project_id;
+    const title = req.body.title;
+    const doi = req.body.doi;
+    const isbn = req.body.isbn;
+    const queryVerifyIfArticleExists = "MATCH (n:Article) WHERE n.title = '" + title + "' OR n.doi = '" + doi + "' OR n.isbn= '" + isbn + "' RETURN n";
 
     const { error } = articleCreation(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
-    try {
-        const articleCreated = await Article.create(req.body);
-        const projectToConnect = await Project.find(project_id);
 
-        if (articleCreated && projectToConnect) {
-            let article = {};
-            const articleID = articleCreated.identity().low;
-            const queryToCreateRelation = "MATCH (a:Projeto),(b:Article)  WHERE a.project_id ='" + project_id + "' and ID(b) = " + articleID + " CREATE (a)-[x:OWN]->(b)";
+    const verifyResult = await instance.readCypher(queryVerifyIfArticleExists);
 
-            instance.writeCypher(queryToCreateRelation);
+    if (verifyResult.records.length > 0) {
+        return res.status(400).json({ error: "Article already exist" });
+    } else {
+        try {
+            const articleCreated = await Article.create(req.body);
+            const projectToConnect = await Project.findById(project_id);
 
-            article = articleCreated.properties();
-            article.articleID = articleID;
+            if (articleCreated && projectToConnect) {
+                let article = {};
+                const articleID =  articleCreated.identity().low;
+                const queryToCreateRelation = "MATCH (a:Project),(b:Article)  WHERE ID(a) =" + project_id + " and ID(b) = " + articleID + " CREATE (a)-[x:OWN]->(b)";
 
-            return res.status(200).json({ sucess: "Article created successfully", article })
+                instance.writeCypher(queryToCreateRelation);
+
+                article =  articleCreated.properties();
+                article.year = articleCreated.get('year').year.low;
+                article.articleID = articleID;
+
+                return res.status(200).json({ sucess: "Article created successfully", article })
+            }
+        } catch (err) {
+            return res.json(err);
         }
-    } catch (err) {
-        return res.json(err);
     }
 }
 
@@ -92,6 +103,8 @@ articleController.getArticleInfoByID = async (req, res) => {
         instance.readCypher(query).then(result => {
             let article = {};
             article = result.records[0]._fields[0].properties;
+            article.createdAt = result.records[i]._fields[0].properties.createdAt.year  + "/" + result.records[i]._fields[0].properties.createdAt.month+ "/" + result.records[i]._fields[0].properties.createdAt.day;
+            article.year = result.records[i]._fields[0].properties.year.year.low;
             article.articleID = result.records[0]._fields[0].identity.low;
             return res.status(200).json(article);
         })
@@ -103,7 +116,7 @@ articleController.getArticleInfoByID = async (req, res) => {
 
 articleController.getArticlesFromProjectID = async (req, res) => {
     const projectID = req.params.project_id;
-    const queryGetAllArticles = "MATCH (a)-[x:OWN]->(b) WHERE ID(a) = " + projectID + " Return (b)";
+    const queryGetAllArticles = "MATCH (a:Project)-[x:OWN]->(b:Article) WHERE ID(a) = " + projectID + " Return (b)";
 
     try {
         instance.readCypher(queryGetAllArticles).then(result => {
@@ -113,9 +126,12 @@ articleController.getArticlesFromProjectID = async (req, res) => {
                 for (let i = 0; i < result.records.length; i++) {
                     let article = {};
                     article = result.records[i]._fields[0].properties;
+                    article.createdAt = result.records[i]._fields[0].properties.createdAt.year  + "/" + result.records[i]._fields[0].properties.createdAt.month+ "/" + result.records[i]._fields[0].properties.createdAt.day;
+                    article.year = result.records[i]._fields[0].properties.year.year.low;
                     article.articleID = result.records[i]._fields[0].identity.low;
                     articles.push(article);
                 }
+                console.log(articles);
                 return res.status(200).json(articles);
             }
         })
@@ -167,10 +183,28 @@ articleController.deleteArticle = async (req, res) => {
 }
 
 articleController.relateOneToMany = async (req, res) => {
+    const articleID = req.params.articleID;
+    const articlesToRelate = req.body.articles;
+    const relationName = req.body.relationName;
+    newquery = "MATCH (a:Article) WHERE ID(a) =" + articleID + " WITH a "
 
+    for (let i = 0; i < articlesToRelate.length - 1; i++) {
+        newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[i].articleID + " CREATE (a)-[x:" + relationName + "]->(b) WITH a ";
+    }
+    newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[articlesToRelate.length - 1].articleID + " CREATE (a)-[x:" + relationName + "]->(b) ";
+
+    try {
+        instance.writeCypher(newquery);
+        return res.status(200).json({ success: "Articles Related with success" });
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
 }
 
 articleController.getConfigForRunNeoVis = async (req, res) => {
+    const project_id = req.params.project_id;
+    const query = "Match (a:Projeto)-[x]->(b:Article) where ID(a)=" + project_id + " WITH a,b,x OPTIONAL MATCH (b:Article)-[z]->(c:Article)  RETURN a,x,z,b,c "
     const config = {
         container_id: "viz",
         server_url: req.body.server_url,
@@ -189,9 +223,17 @@ articleController.getConfigForRunNeoVis = async (req, res) => {
                     "subject"
                 ]
             },
-        }
+        },
+        relationships: {
+            [NeoVis.NEOVIS_DEFAULT_CONFIG]: {
+                "thickness": "count"
+            }
+        },
+        arrows: true,
+        thickness: "count",
+        initial_cypher: query
     };
-
+    return res.status(200).json(config);
 }
 
 articleController.getCommentsFromArticleID = async (req, res) => {
@@ -211,15 +253,27 @@ articleController.getCommentsFromArticleID = async (req, res) => {
                 return res.status(200).json(comments);
             }
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.json(err);
     }
 }
 
 articleController.editArticle = async (req, res) => {
+    const articleID = req.params.articleID;
+    const findedArticle = Article.findById(articleID);
 
+    const { error } = editArticleValidation(req.body);
+    if (error) {
+        return res.status(400).send(error.details[0].message);
+    }
+
+    if (findedArticle) {
+        (await findedArticle).update(req.body);
+        return res.status(200).json({ success: "Article Updated!" });
+    } else {
+        return res.status(400).json({ error: "Error trying to edit article!" });
+    }
 }
-
 
 module.exports = articleController;
