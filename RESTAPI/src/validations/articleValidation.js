@@ -16,7 +16,7 @@ const articleCreation = data =>{
     return schema.validate(data);
 }
 
-const editArticle = data =>{
+const editArticleValidation = data =>{
     const schema = Joi.object({
         title: Joi.string().required(),
         abstract: Joi.string(),
@@ -34,7 +34,9 @@ const commentCreation = data =>{
     });
     return schema.validate(data);
 }
+
 module.exports.articleCreation = articleCreation;
 module.exports.commentCreation = commentCreation;
-module.exports.editArticle = editArticle;
+module.exports.editArticleValidation = editArticleValidation;
+
 

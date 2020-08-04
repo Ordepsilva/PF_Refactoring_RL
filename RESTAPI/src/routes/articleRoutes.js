@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { authorized } = require('../middlewares/authorize');
-
 const articleController = require("../controllers/articleController");
 
 router.post('/createArticle/:project_id', authorized(), articleController.createArticle);
@@ -18,11 +17,10 @@ router.get('/getArticlesFromProjectID/:project_id', authorized(), articleControl
 
 router.get('/getCommentsFromArticleID/:articleID', authorized(), articleController.getCommentsFromArticleID);
 
+router.get('/getConfigForRunNeoVis/:project_id', authorized(), articleController.getConfigForRunNeoVis);
+
 router.put('/editArticle/:articleID', authorized(), articleController.editArticle);
 
-router.delete('/deleteArticle/:articleID', authorized(), articleController.deleteArticle);
-
-
-
+router.delete('/:articleID', authorized(), articleController.deleteArticle);
 
 module.exports = router;
