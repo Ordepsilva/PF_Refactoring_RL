@@ -1,37 +1,106 @@
-<!---->
 <div class="grid-row-1">
+    <span class="material-icons" title="Go back" style="padding: 10px; margin-top: 1%; cursor: pointer; "
+        routerLink="/home">
+        arrow_back_ios
+    </span>
 </div>
 <div class="grid-row-2">
-    <div class="row2-1">
+    <div class="row2-1" (click)=" project_info()" style="cursor: pointer;">
         <span>{{project_name}}</span>
-        <button routerLink="/home" (click)=" project_info()" class="row2-button"><span>About this project</span></button>
+        <span class="material-icons" title="Project Information"
+            style="padding: 10px;  cursor: pointer; font-size: 30px;">
+            info
+        </span>
     </div>
     <div class="row2-2">
         <span>Here's the list of all your articles.</span>
     </div>
 </div>
 <div class="grid-row-3">
-    <div class="search-hero">
-        <div class="search_text_icon">
-            <mat-icon style=" color: black; " aria-hidden="true">search</mat-icon>
-            <input class="search_input" #input placeholder="Search for something...">
-        </div>
+
+    <button (click)="project_info()" class="row2-button" style="margin-left: 5%; padding: 10px;"><span>New
+            Article</span></button>
+
+    <div class="tabs-design">
+        <button style="background-color: none;" class="tabs-buttons" (click)="setLabel1()">Article List</button>
+        <button style="background-color: none;" class="tabs-buttons" (click)="setLabel1()">Relate Articles</button>
+        <button class="tabs-buttons" (click)="setLabel2()">Visualization</button>
     </div>
-    <div class="colmn3 ">
-        <div class="table-container">
-            
-            <div *ngIf="!isloaded" class="spinner">
-                <mat-spinner></mat-spinner>
+    <div class="colmn3">
+        <div *ngIf="firstLabel">
+            <div class="table-container">
+                <div *ngIf="!isloaded" class="spinner">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <table *ngIf="isloaded" class="mat-elevation-z8" mat-table [dataSource]="dataSource">
+                    <!-- Position Column -->
+
+                    <ng-container matColumnDef="title">
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Title</th>
+                        <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="ver(element)">
+                            {{element.title}} </td>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="year">
+                        <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Year </th>
+                        <td mat-cell style="text-align: left; padding-left: 20px; " *matCellDef="let element"
+                            (click)="ver(element)"> {{element.year}} </td>
+                    </ng-container>
+
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="createdAt">
+                        <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Created At </th>
+                        <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="ver(element)">
+                            {{element.createdAt}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="buttons">
+                        <th mat-header-cell style="text-align: center;" *matHeaderCellDef>
+                            <div class="container">
+                                <div class="search">
+                                    <span class="material-icons">
+                                        search
+                                    </span>
+                                    <input type="text" (keyup)="applyFilter($event)" class="input"
+                                        placeholder="Search...">
+
+                                </div>
+                            </div>
+                        </th>
+                        <td mat-cell *matCellDef="let element">
+                            <div class="table_buttons">
+                                <mat-icon class="project_buttons" (click)="editArticle(element)"
+                                    style=" color: #808080; cursor: pointer;" aria-hidden="true">edit
+                                </mat-icon>
+                                <mat-icon class="project_buttons" (click)="deleteArticle(element)"
+                                    style=" color: red; cursor: pointer;" aria-hidden="true">delete
+                                </mat-icon>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <div class="table-header">
+                        <tr mat-header-row style="background-color: #dedede;height: 100px;  "
+                            *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    </div>
+                    <div class="table-content">
+                        <tr mat-row style="max-height: 75px; cursor: pointer;" title="Click to open article"
+                            *matRowDef="let row; columns: displayedColumns;" class="table-row">
+                        </tr>
+                    </div>
+
+                </table>
+
             </div>
-            <mat-tab-group animationDuration="2000ms">
-                <!-- #enddocregion slow-animation-duration -->
-                <mat-tab label="Articles List">Content 1</mat-tab>
-                <mat-tab label="Visualization">Content 2</mat-tab>
-            </mat-tab-group>
-            
         </div>
+        <!--Tentar descobrir o pq do erro-->
+        <div id="viz" class="viz" *ngIf="secondLabel" style="width: 100%; height: 100%; outline: none;"></div>
     </div>
-    
+
+        <div class="pagination_margin">
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+ 
 </div>
 <div class="grid-row-4">
 </div>
