@@ -16,7 +16,6 @@ export class SideNavComponent implements OnInit {
   constructor(public authservice: AuthenticationServiceService, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.router.url === "/home") {
       this.authservice.getuserinfo().subscribe(
         (result: any) => {
           this.user = result;
@@ -27,7 +26,7 @@ export class SideNavComponent implements OnInit {
           console.log(err);
         }
       )
-    }
+    
   }
 
   /**Função responsável por efetuar o logout*/

@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
 import { dataService } from 'src/app/services/dataService';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
+import Cookies from 'js-cookie';
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
@@ -25,16 +26,15 @@ export class ProjectsComponent implements OnInit {
   constructor(public project_service: ProjectsService, private router: Router, public dialog: MatDialog, private projectC: dataService) { }
 
   ngOnInit(): void {
-    //define o estado do spinner como ativo
+    Cookies.remove('project_id');
+    Cookies.remove('project_name');
     this.isloaded = false;
-    //carrega todos os projetos existentes do utilizador para a tabela
     this.project_service.getProjectsForUser().subscribe(
       (result: any) => {
         this.projectC.projects = result;
         this.projects = result;
         this.dataSource = new MatTableDataSource(this.projects);
         this.dataSource.paginator = this.paginator;
-        //define o estado do spinner como inativo
         this.isloaded = true;
       },
       (err: HttpErrorResponse) => {
@@ -133,6 +133,10 @@ export class ProjectsComponent implements OnInit {
   }
 
   ver(row:any){
+    console.log(row);
+    Cookies.set('project_id', row.project_id);
+    Cookies.set('project_name', row.project_name);
+   
     this.router.navigate(["/projectHome"]);
   }
 }

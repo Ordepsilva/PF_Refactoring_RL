@@ -49,9 +49,7 @@ export class DialogComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close({ nothing: "nothing" });
   }
-  /**
-   * Verifica os campos do projeto, se estão ou não completos
-   */
+
   verifyProj(): void {
     if (this.project.project_name === "") {
       alert("Please insert a project name!");
@@ -64,9 +62,6 @@ export class DialogComponent implements OnInit {
     }
   }
 
-  /**
-   * Função responsável por criar um projeto
-   */
   createProj(): void {
     this.proj_service.createProject(this.project).subscribe(
       result => {
@@ -82,13 +77,10 @@ export class DialogComponent implements OnInit {
     )
   };
 
-  /**
-   * Função responsável por editar um projeto
-   */
   editProject(): void {
     this.projectToedit.project_name = this.projectEdit.project_name;
     this.projectToedit.subject = this.projectEdit.subject;
-
+    console.log(this.projectEdit);
     if (this.projectEdit.description === "") {
     } else {
       this.projectToedit.description = this.projectEdit.description;
@@ -112,9 +104,6 @@ export class DialogComponent implements OnInit {
     );
   }
 
-  /**
-   * Função responsável por eliminar um projeto
-   */
   deleteProj(): void {
     try {
       this.proj_service.deleteProject(this.projectTodelete.project_id).subscribe(result => {

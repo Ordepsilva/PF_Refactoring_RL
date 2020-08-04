@@ -4,7 +4,7 @@
 <div class="grid-row-2">
     <div class="row2-1">
         <span>Projects</span>
-        <button routerLink="/home" (click)=" createproj()" class="row2-button"><span>New Project </span></button>
+        <button  (click)=" createproj()" class="row2-button"><span>New Project </span></button>
     </div>
     <div class="row2-2">
         <span>Here's the list of all your projects.</span>
@@ -52,10 +52,6 @@
 
                 <ng-container matColumnDef="buttons">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef>
-                        <div class="container">
-                            <input type="text"  (keyup)="applyFilter($event)" class="input" placeholder="Search...">
-                            <div class="search"></div>
-                          </div>
                     </th>
                     <td mat-cell *matCellDef="let element">
                         <div class="table_buttons">
