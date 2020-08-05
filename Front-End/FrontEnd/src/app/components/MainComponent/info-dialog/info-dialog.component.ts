@@ -16,7 +16,7 @@ export class InfoDialogComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.type == "success"){
       this.success=true;
-    }else if(this.data.type=="failed"){
+    }else if(this.data.type =="failed"){
       this.failed=true;
     }
   }

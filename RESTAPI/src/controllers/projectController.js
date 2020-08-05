@@ -8,19 +8,24 @@ const projController = {};
 projController.createProject = async (req, res) => {
     const username = req.auth.username;
     const project_name = req.body.project_name;
-    const user = await User.find(username);
     const { error } = projectCreation(req.body);
 
+    console.log(req.body);
+    console.log(username);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
-
     const findedProject = await Project.find(project_name);
+    console.log(findedProject);
     if (findedProject) {
         return res.status(400).json({ error: "Project name already exists!" });
     } else {
         try {
             const project = await Project.create(req.body);
+            console.log(await User.find(username));
+            const user = await User.find(username);
+            console.log(project);
+            console.log(user);
             if (project && user) {
                 const project_id = project.identity().low;
                 const queryConnectRelationsNodeToProject = "MATCH (n:Project) WHERE ID(n)=" + project_id + " CREATE (n)-[:HAS_RELATIONS]->(a:Relations {name:'Relations'})";
@@ -28,11 +33,12 @@ projController.createProject = async (req, res) => {
                 const articleCreated = {};
 
                 articleCreated.project_name = project.get('project_name');
+                console.log(articleCreated.project_name);
                 articleCreated.description = project.get('description');
                 articleCreated.project_id = project_id;
                 articleCreated.subject = project.get('subject');
                 dateobj = project.get('createdAt');
-                articleCreated.date = dateobj.day + "/" + dateobj.month + "/" + dateobj.year;
+                articleCreated.date = dateobj.year + "/" + dateobj.month + "/" + dateobj.day;
 
                 instance.writeCypher(queryToRelateProjectToUser);
                 instance.writeCypher(queryConnectRelationsNodeToProject);
@@ -48,7 +54,7 @@ projController.createProject = async (req, res) => {
 
 projController.getProjectsForUser = async (req, res) => {
     const username = req.auth.username;
-    const queryToGetAllProjects = "MATCH (b)-[:OWN]->(a) WHERE a.username = '" + username + "' RETURN (b)";
+    const queryToGetAllProjects = "MATCH (a)-[:OWN]->(b) WHERE a.username = '" + username + "' RETURN (b)";
 
     instance.readCypher(queryToGetAllProjects)
         .then(result => {
@@ -60,7 +66,7 @@ projController.getProjectsForUser = async (req, res) => {
                 project.description = result.records[i]._fields[0].properties.description;
                 project.project_id = result.records[i]._fields[0].identity.low;
                 project.subject = result.records[i]._fields[0].properties.subject;
-                date = result.records[i]._fields[0].properties.createdAt.day + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.year;
+                date = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
                 project.date = date;
 
                 projects[i] = project;
@@ -83,8 +89,8 @@ projController.editProject = async (req, res) => {
         return res.status(400).send(error.details[0].message);
     }
     try {
-        const queryFindProject = "Match (n:Project) where ID(n)=" + project_id + " SET n += $info return n";
-        instance.readCypher(queryFindProject, paramsToUpdate).then(result => {
+        const queryFindProject = "MATCH (n:Project) WHERE ID(n)=" + project_id + " SET n += $info RETURN n";
+        instance.writeCypher(queryFindProject, paramsToUpdate).then(result => {
             if (result) {
                 return res.status(200).json({ response: "Success" });
             }
@@ -97,7 +103,6 @@ projController.editProject = async (req, res) => {
 
 projController.deleteProject = async (req, res) => {
     const project_id = req.params.project_id;
-    //const queryToDeleteProject = "Match (n:Project) WHERE ID(n)=" + project_id + "DELETE n";
     try {
         const projectToDelete = await Project.findById(project_id);
         if (projectToDelete) {

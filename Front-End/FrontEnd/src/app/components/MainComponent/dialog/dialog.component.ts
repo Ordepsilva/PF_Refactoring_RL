@@ -65,7 +65,8 @@ export class DialogComponent implements OnInit {
   createProj(): void {
     this.proj_service.createProject(this.project).subscribe(
       result => {
-        this.projectTo.projects.push(result.obj);
+        console.log(result);
+        this.projectTo.projects.push(result.articleCreated);
         this.dialogRef.close({result:result});
       }
       , err => {
