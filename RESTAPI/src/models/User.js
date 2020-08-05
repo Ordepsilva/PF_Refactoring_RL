@@ -7,11 +7,6 @@ const userModel = instance.model('User', {
         primary: true,
         required: true 
     },
-    id: {
-        type: 'uuid',
-        unique: true,
-        required: true
-    },
     password: {
         type: 'String',
         required: true
