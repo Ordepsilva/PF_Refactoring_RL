@@ -66,9 +66,17 @@ export class ProjectsComponent implements OnInit {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
             message: "Sucessfully Created",
-            type:"success"
+            type: "success"
           }
-        })
+        });
+      }
+      if (result.error) {
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: result.error,
+            type: "failed"
+          }
+        });
       }
     });
   }
@@ -94,9 +102,9 @@ export class ProjectsComponent implements OnInit {
 
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
-          width: "400px",  data: {
+          width: "400px", data: {
             message: "Sucessfully Edited",
-            type:"success"
+            type: "success"
           }
         })
       }
@@ -104,10 +112,6 @@ export class ProjectsComponent implements OnInit {
       ;
   }
 
-  /**
-   * Função responsável por abrir o popup de  eliminar um projeto e actualizar a tabela de projetos
-   * @param element projeto a ser eliminado
-   */
   deleteproject(element: any) {
     this.projectC.optionString = "delete";
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -125,18 +129,16 @@ export class ProjectsComponent implements OnInit {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
             message: "Sucessfully Deleted",
-            type:"success"
+            type: "success"
           }
         })
       }
     });
   }
 
-  ver(row:any){
-    console.log(row);
+  openProject(row: any) {
     Cookies.set('project_id', row.project_id);
     Cookies.set('project_name', row.project_name);
-   
     this.router.navigate(["/projectHome"]);
   }
 }

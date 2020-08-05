@@ -16,16 +16,13 @@ import { dataService } from 'src/app/services/dataService';
 })
 
 export class DialogComponent implements OnInit {
-  //Inputs recebidos
   @Input() project: Project = new Project();
   @Input() projectEdit: Project = new Project();
 
-  //Variáveis que definem o tipo de operação
   edit = false;
   create = false;
   delete = false;
 
-  //Objetos vazios
   projectToedit: any = {};
   projectTodelete: any = {};
 
@@ -65,14 +62,13 @@ export class DialogComponent implements OnInit {
   createProj(): void {
     this.proj_service.createProject(this.project).subscribe(
       result => {
-        console.log(result);
         this.projectTo.projects.push(result.articleCreated);
-        this.dialogRef.close({result:result});
+        this.dialogRef.close({ result: result });
       }
       , err => {
         console.log(err.error);
         alert(
-          err.error
+          err.error.error
         );
       }
     )
@@ -81,7 +77,7 @@ export class DialogComponent implements OnInit {
   editProject(): void {
     this.projectToedit.project_name = this.projectEdit.project_name;
     this.projectToedit.subject = this.projectEdit.subject;
-    console.log(this.projectEdit);
+
     if (this.projectEdit.description === "") {
     } else {
       this.projectToedit.description = this.projectEdit.description;
@@ -111,7 +107,6 @@ export class DialogComponent implements OnInit {
         let updatedArray = [];
         for (let project of this.projectTo.projects) {
           if (project.project_id !== this.projectTodelete.project_id) {
-
             updatedArray.push(project);
           }
         }
@@ -123,7 +118,6 @@ export class DialogComponent implements OnInit {
     } catch (err) {
       console.log(err);
     }
-
   }
 }
 

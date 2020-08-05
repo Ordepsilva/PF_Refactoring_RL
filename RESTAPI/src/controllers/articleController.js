@@ -60,12 +60,12 @@ articleController.createArticle = async (req, res) => {
 
             if (articleCreated && projectToConnect) {
                 let article = {};
-                const articleID =  articleCreated.identity().low;
+                const articleID = articleCreated.identity().low;
                 const queryToCreateRelation = "MATCH (a:Project),(b:Article)  WHERE ID(a) =" + project_id + " and ID(b) = " + articleID + " CREATE (a)-[x:OWN]->(b)";
 
                 instance.writeCypher(queryToCreateRelation);
 
-                article =  articleCreated.properties();
+                article = articleCreated.properties();
                 article.year = articleCreated.get('year').year.low;
                 article.articleID = articleID;
 
@@ -78,10 +78,29 @@ articleController.createArticle = async (req, res) => {
 }
 
 articleController.relateArticlesByID = async (req, res) => {
-    const articleID = req.params.articleID;
-    const articleToRelateID = req.body.articleID;
+    const articleID = req.body.articleID;
+    const articleToRelateID = req.body.articleToRelateID;
     const relationName = req.body.relationName;
+    const project_id = req.params.project_id;
+    console.log(project_id);
     const queryToRelate = "MATCH (a:Article),(b:Article) WHERE ID(a)=" + articleID + " and ID(b)=" + articleToRelateID + " CREATE (a)-[x:" + relationName + "]->(b) RETURN x";
+    const checkIfRelationExist = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b OPTIONAL MATCH (b)-[x:OWN]->(z) WHERE z.name= '" + relationName + "' RETURN z";
+
+    try {
+        instance.readCypher(checkIfRelationExist).then(result => {
+            console.log(result.records.length + " TAM");
+            console.log(result.records);
+            console.log("records length:" + result.records[0]._fields.length);
+            if (!(result.records[0]._fields.length > 1)) {
+                console.log("aqui");
+                const queryAddNewRelation = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b CREATE (b)-[x:OWN]->(z {name:'" + relationName + "'})";
+                instance.writeCypher(queryAddNewRelation);
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
 
     try {
         instance.writeCypher(queryToRelate).then(result => {
@@ -103,7 +122,7 @@ articleController.getArticleInfoByID = async (req, res) => {
         instance.readCypher(query).then(result => {
             let article = {};
             article = result.records[0]._fields[0].properties;
-            article.createdAt = result.records[i]._fields[0].properties.createdAt.year  + "/" + result.records[i]._fields[0].properties.createdAt.month+ "/" + result.records[i]._fields[0].properties.createdAt.day;
+            article.createdAt = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
             article.year = result.records[i]._fields[0].properties.year.year.low;
             article.articleID = result.records[0]._fields[0].identity.low;
             return res.status(200).json(article);
@@ -126,7 +145,7 @@ articleController.getArticlesFromProjectID = async (req, res) => {
                 for (let i = 0; i < result.records.length; i++) {
                     let article = {};
                     article = result.records[i]._fields[0].properties;
-                    article.createdAt = result.records[i]._fields[0].properties.createdAt.year  + "/" + result.records[i]._fields[0].properties.createdAt.month+ "/" + result.records[i]._fields[0].properties.createdAt.day;
+                    article.createdAt = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
                     article.year = result.records[i]._fields[0].properties.year.year.low;
                     article.articleID = result.records[i]._fields[0].identity.low;
                     articles.push(article);
@@ -186,8 +205,8 @@ articleController.relateOneToMany = async (req, res) => {
     const articleID = req.params.articleID;
     const articlesToRelate = req.body.articles;
     const relationName = req.body.relationName;
-    newquery = "MATCH (a:Article) WHERE ID(a) =" + articleID + " WITH a "
 
+    newquery = "MATCH (a:Article) WHERE ID(a) =" + articleID + " WITH a "
     for (let i = 0; i < articlesToRelate.length - 1; i++) {
         newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[i].articleID + " CREATE (a)-[x:" + relationName + "]->(b) WITH a ";
     }
@@ -276,4 +295,26 @@ articleController.editArticle = async (req, res) => {
     }
 }
 
+articleController.getRelationsForProjectID = async (req, res) => {
+    const project_id = req.params.project_id;
+    const queryToGetRelations = "MATCH (n:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(n)=" + project_id + " WITH b OPTIONAL MATCH  (b)-[x:OWN]->(z) RETURN z"
+
+    try {
+        instance.readCypher(queryToGetRelations).then(result => {
+            if (result) {
+                let relations = [];
+
+                for (let i = 0; i < result.records.length; i++) {
+                    relationName = result.records[i]._fields[0].properties.name;
+                    console.log(relationName);
+                    relations.push(relationName);
+                }
+                return res.status(200).json(relations);
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
+}
 module.exports = articleController;
