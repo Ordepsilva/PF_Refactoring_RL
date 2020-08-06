@@ -82,24 +82,15 @@ articleController.relateArticlesByID = async (req, res) => {
     const articleToRelateID = req.body.articleToRelateID;
     const relationName = req.body.relationName;
     const project_id = req.params.project_id;
-    console.log(project_id);
     const queryToRelate = "MATCH (a:Article),(b:Article) WHERE ID(a)=" + articleID + " and ID(b)=" + articleToRelateID + " CREATE (a)-[x:" + relationName + "]->(b) RETURN x";
-    const checkIfRelationExist = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b OPTIONAL MATCH (b)-[x:OWN]->(z) WHERE z.name= '" + relationName + "' RETURN z";
+    const checkIfRelationExist = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b OPTIONAL MATCH (b)-[x:OWN]->(z) WHERE z.name= '" + relationName + "' WITH count(z) as count RETURN count";
 
-    try {
-        instance.readCypher(checkIfRelationExist).then(result => {
-            console.log(result.records.length + " TAM");
-            console.log(result.records);
-            console.log("records length:" + result.records[0]._fields.length);
-            if (!(result.records[0]._fields.length > 1)) {
-                console.log("aqui");
-                const queryAddNewRelation = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b CREATE (b)-[x:OWN]->(z {name:'" + relationName + "'})";
-                instance.writeCypher(queryAddNewRelation);
-            }
-        });
-    } catch (err) {
-        console.log(err);
-        return res.json(err);
+    const result = await instance.readCypher(checkIfRelationExist);
+    console.log("COUNT: " +  result.records[0]._fields[0].low);
+    if(result.records[0]._fields[0].low == 0){
+        console.log("entrei");
+        const queryAddNewRelation = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b CREATE (b)-[x:OWN]->(z {name:'" + relationName + "'})";
+        (await instance.writeCypher(queryAddNewRelation)) ;
     }
 
     try {
