@@ -47,9 +47,9 @@ export class ProjectHomeComponent implements OnInit {
         this.isloaded = true;
       }
     );
-    if(this.articles.length == 0){
-      document.getElementById("vizualize").setAttribute("disabled", "disabled");
-    }
+   // if(this.articles.length == 0){
+      //document.getElementById("vizualize").setAttribute("disabled", "disabled");
+   // }
   }
 
   applyFilter(event: Event) {
