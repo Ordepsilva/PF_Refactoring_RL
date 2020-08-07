@@ -46,6 +46,9 @@ export class ProjectHomeComponent implements OnInit {
         this.dataSource = new MatTableDataSource(this.articles);
         this.dataSource.paginator = this.paginator;
         this.isloaded = true;
+        if (this.articles.length == 0) {
+          document.getElementById("vizualize").setAttribute("disabled", "disabled");
+        }
       },
       (err: HttpErrorResponse) => {
         console.log(err);

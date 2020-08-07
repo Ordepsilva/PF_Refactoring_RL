@@ -99,7 +99,6 @@ export class DialogComponent implements OnInit {
           }
         }
         this.dialogRef.close({ result: result });
-
       }, err => {
         console.log(err.error);
         alert(err.error);
