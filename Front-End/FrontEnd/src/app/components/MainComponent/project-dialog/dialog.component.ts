@@ -22,15 +22,18 @@ export class DialogComponent implements OnInit {
   edit = false;
   create = false;
   delete = false;
+  info = false;
 
   projectToedit: any = {};
   projectTodelete: any = {};
+  projectReceived: any = {};
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<DialogComponent>, public dialog: MatDialog, public router: Router, public proj_service: ProjectsService, private projectTo: dataService
   ) {
     this.projectEdit = data;
     this.projectTodelete = data;
+    this.projectReceived = data;
   }
 
   ngOnInit(): void {
@@ -40,6 +43,9 @@ export class DialogComponent implements OnInit {
       this.create = true;
     } else if (this.projectTo.optionString == "delete") {
       this.delete = true;
+    } else if (this.projectTo.optionString == "info") {
+      this.getProjectInfo();
+      this.info = true;
     }
   }
 
@@ -117,6 +123,19 @@ export class DialogComponent implements OnInit {
       };
     } catch (err) {
       console.log(err);
+    }
+  }
+
+
+  getProjectInfo(): void {
+    this.proj_service.getProjectInfo(this.projectReceived.project_id).subscribe(result => {
+      this.project.project_name = result.project_name;
+      this.project.subject = result.subject;
+      this.project.description = result.description;
+      this.project.createdAt = result.date;
+    }), err => {
+      console.log(err.error);
+      alert(err.error);
     }
   }
 }

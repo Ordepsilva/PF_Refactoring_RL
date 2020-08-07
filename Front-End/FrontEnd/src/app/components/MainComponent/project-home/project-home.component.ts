@@ -6,6 +6,9 @@ import { Router } from '@angular/router';
 import Cookies from 'js-cookie'
 import { ArticleService } from 'src/app/services/article/article.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { dataService } from 'src/app/services/dataService';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../project-dialog/dialog.component';
 
 
 
@@ -17,20 +20,22 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ProjectHomeComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  project_name ; 
+  project_name;
+  project_id;
   isloaded = true;
   firstLabel = false;
   secondLabel = false;
   dataSource;
-  articles=[];
+  articles = [];
   //articles = [{ title: "xxx", year: "1975", createdAt: "18/07/98" }];
   displayedColumns: string[] = ['title', 'year', 'createdAt', 'buttons'];
 
-  constructor(public router: Router, public articleService: ArticleService) {
+  constructor(public router: Router, public articleService: ArticleService, private data_service: dataService, public dialog: MatDialog) {
 
   }
   ngOnInit(): void {
     this.project_name = Cookies.get('project_name');
+    this.project_id = Cookies.get('project_id');
     this.firstLabel = true;
     this.secondLabel = false;
 
@@ -47,9 +52,9 @@ export class ProjectHomeComponent implements OnInit {
         this.isloaded = true;
       }
     );
-   // if(this.articles.length == 0){
-      //document.getElementById("vizualize").setAttribute("disabled", "disabled");
-   // }
+    // if(this.articles.length == 0){
+    //document.getElementById("vizualize").setAttribute("disabled", "disabled");
+    // }
   }
 
   applyFilter(event: Event) {
@@ -57,8 +62,13 @@ export class ProjectHomeComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  project_info() {
-    alert("nothing");
+  project_info(): void {
+    this.data_service.optionString = "info";
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width:"700px",  data: {
+        project_id: this.project_id,
+      }
+    });
   }
 
   loadViz() {

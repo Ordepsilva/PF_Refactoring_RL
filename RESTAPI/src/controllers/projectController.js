@@ -117,7 +117,7 @@ projController.deleteProject = async (req, res) => {
 
 projController.getProjectInfoById = async (req, res) => {
     const projectID = req.params.project_id;
-    const query = "MATCH (n:Project) WHERE ID(n)=" + projectID + "RETURN n";
+    const query = "MATCH (n:Project) WHERE ID(n)=" + projectID + " RETURN n";
     try {
         instance.readCypher(query).then(result => {
             let project = {};
