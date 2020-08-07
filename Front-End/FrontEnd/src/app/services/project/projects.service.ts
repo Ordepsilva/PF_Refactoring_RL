@@ -46,7 +46,10 @@ export class ProjectsService {
   editProject(project_id: string, project: any) {
     return this.http
       .put<any>(endpoint + "editProject/" + project_id, project);
-
+  }
+  
+  getProjectInfo(project_id: string){
+    return this.http.get<any>(endpoint + "getProjectById/" + project_id);
   }
 
 }

@@ -5,7 +5,7 @@ import { ProjectsService } from 'src/app/services/project/projects.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogComponent } from '../dialog/dialog.component';
+import { DialogComponent } from '../project-dialog/dialog.component';
 import { dataService } from 'src/app/services/dataService';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import Cookies from 'js-cookie';

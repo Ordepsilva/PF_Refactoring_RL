@@ -23,7 +23,7 @@ import { AuthenticationServiceService } from './services/authentication/authenti
 import { JwtInterceptorService } from './helper/JwtInterceptorService';
 import { ProjectsService } from './services/project/projects.service';
 import { MatDialogModule } from '@angular/material/dialog';
-import { DialogComponent } from './components/MainComponent/dialog/dialog.component';
+import { DialogComponent } from './components/MainComponent/project-dialog/dialog.component';
 import { SideNavComponent } from './components/MainComponent/side-nav/side-nav.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectsComponent } from './components/MainComponent/projects/projects.component';
@@ -34,6 +34,7 @@ import { dataService } from './services/dataService';
 import { InfoDialogComponent } from './components/MainComponent/info-dialog/info-dialog.component';
 import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import { ArticleDialogComponent } from './components/MainComponent/article-dialog/article-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,6 +45,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     ProjectsComponent,
     InfoDialogComponent,
     ProjectHomeComponent,
+    ArticleDialogComponent,
   ],
   imports: [
     BrowserModule,

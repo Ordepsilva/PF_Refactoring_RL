@@ -33,7 +33,9 @@ mat-label{
     flex-direction: column;
     flex-grow: 1;
   }
-
+.font{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
   textarea{
       font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
       height: 100px;
@@ -59,6 +61,11 @@ mat-label{
     background-color:  green;
   }
 
+  .formatDescription{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 15px;
+  }
+
   ::ng-deep .mat-focused .mat-form-field-label {
     /*change color of label*/
     color: darkslategray !important;
@@ -70,3 +77,4 @@ mat-label{
     /*change color of underline when focused*/
     background-color: darkslategray !important;;
    }
+   
