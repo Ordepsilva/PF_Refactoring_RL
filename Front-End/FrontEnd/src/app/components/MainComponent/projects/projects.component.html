@@ -4,7 +4,7 @@
 <div class="grid-row-2">
     <div class="row2-1">
         <span>Projects</span>
-        <button  (click)=" createproj()" class="row2-button"><span>New Project </span></button>
+        <button (click)=" createproj()" class="row2-button"><span>New Project </span></button>
     </div>
     <div class="row2-2">
         <span>Here's the list of all your projects.</span>
@@ -27,25 +27,29 @@
 
                 <ng-container matColumnDef="project_name">
                     <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Project Name </th>
-                    <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="openProject(element)"> {{element.project_name}} </td>
+                    <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="openProject(element)">
+                        {{element.project_name}} </td>
                 </ng-container>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="subject">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Subject </th>
-                    <td mat-cell style="text-align: left; padding-left: 20px; " *matCellDef="let element" (click)="openProject(element)"> {{element.subject}} </td>
+                    <td mat-cell style="text-align: left; padding-left: 20px; " *matCellDef="let element"
+                        (click)="openProject(element)"> {{element.subject}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="createdAt">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Created At </th>
-                    <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="openProject(element)"> {{element.date}} </td>
+                    <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="openProject(element)">
+                        {{element.date}} </td>
                 </ng-container>
 
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="description">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Description </th>
-                    <td mat-cell style="text-align: left; padding-left: 20px; " *matCellDef="let element" (click)="openProject(element)">
+                    <td mat-cell style="text-align: left; padding-left: 20px; " *matCellDef="let element"
+                        (click)="openProject(element)">
                         <p class="truncate">{{element.description}}</p>
                     </td>
                 </ng-container>
@@ -69,11 +73,11 @@
                         *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 </div>
                 <div class="table-content">
-                    <tr mat-row style="max-height: 75px; cursor: pointer;" title="Click to open project" *matRowDef="let row; columns: displayedColumns;"
-                        class="table-row">
+                    <tr mat-row style="max-height: 75px; cursor: pointer;" title="Click to open project"
+                        *matRowDef="let row; columns: displayedColumns;">
                     </tr>
                 </div>
-               
+
             </table>
 
         </div>

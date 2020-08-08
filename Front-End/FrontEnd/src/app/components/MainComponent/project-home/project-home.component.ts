@@ -74,6 +74,9 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
+  createArticle(){
+    alert("nothing");
+  }
   loadViz() {
     const queryteste = "Match (a:Project)-[x]->(b:Article) where ID(a)=" + Cookies.get('project_id') + " WITH a,b,x OPTIONAL MATCH (b:Article)-[z]->(c:Article)   return a,x,z,b,c "
     const queryquery = "Match (a:Projeto)-[x]->(b:Article) where a.project_id='" + Cookies.get('project_id') + "' return a,x,b  UNION  Match(a:Article)-[x]->(b:Article) return a,x,b"

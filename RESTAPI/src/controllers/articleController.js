@@ -86,7 +86,7 @@ articleController.relateArticlesByID = async (req, res) => {
 
     try {
         verifyIfRelationExists(project_id, relationName);
-        
+
         instance.writeCypher(queryToRelate).then(result => {
             if (result) {
                 console.log(result);
@@ -134,7 +134,6 @@ articleController.getArticlesFromProjectID = async (req, res) => {
                     article.articleID = result.records[i]._fields[0].identity.low;
                     articles.push(article);
                 }
-                console.log(articles);
                 return res.status(200).json(articles);
             }
         })
