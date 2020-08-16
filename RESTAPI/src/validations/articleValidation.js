@@ -6,7 +6,7 @@ const articleCreation = data =>{
         title: Joi.string().required(),
         abstract: Joi.string(),
         doi: Joi.string(),
-        year: Joi.date(),
+        year: Joi.number().integer().max(2020),
         author:Joi.string(),
         citation_key: Joi.string(),
         edition: Joi.string(),
@@ -20,11 +20,13 @@ const editArticleValidation = data =>{
     const schema = Joi.object({
         title: Joi.string().required(),
         abstract: Joi.string(),
-        year: Joi.date(),
+        year: Joi.number().integer().max(2020),
         author:Joi.string(),
         citation_key: Joi.string(),
         edition: Joi.string(),
-        tags:Joi.string()
+        tags:Joi.string(),
+        doi: Joi.string(),
+        isbn: Joi.string(),
     });
     return schema.validate(data);
 }

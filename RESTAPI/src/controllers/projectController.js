@@ -30,20 +30,20 @@ projController.createProject = async (req, res) => {
                 const project_id = project.identity().low;
                 const queryConnectRelationsNodeToProject = "MATCH (n:Project) WHERE ID(n)=" + project_id + " CREATE (n)-[:HAS_RELATIONS]->(a:Relations {name:'Relations'})";
                 const queryToRelateProjectToUser = "MATCH (a:User),(b:Project)  WHERE a.username ='" + username + "' and ID(b) = " + project_id + " CREATE (a)-[x:OWN]->(b)";
-                const articleCreated = {};
+                const projectCreated = {};
 
-                articleCreated.project_name = project.get('project_name');
-                console.log(articleCreated.project_name);
-                articleCreated.description = project.get('description');
-                articleCreated.project_id = project_id;
-                articleCreated.subject = project.get('subject');
+                projectCreated.project_name = project.get('project_name');
+                console.log(projectCreated.project_name);
+                projectCreated.description = project.get('description');
+                projectCreated.project_id = project_id;
+                projectCreated.subject = project.get('subject');
                 dateobj = project.get('createdAt');
-                articleCreated.date = dateobj.year + "/" + dateobj.month + "/" + dateobj.day;
+                projectCreated.date = dateobj.year + "/" + dateobj.month + "/" + dateobj.day;
 
                 instance.writeCypher(queryToRelateProjectToUser);
                 instance.writeCypher(queryConnectRelationsNodeToProject);
 
-                return res.status(200).json({ success: "Project created successfully", articleCreated });
+                return res.status(200).json({ success: "Project created successfully", projectCreated });
             }
         } catch (err) {
             console.log(err);
@@ -137,7 +137,4 @@ projController.getProjectInfoById = async (req, res) => {
     }
 }
 
-projController.getProjectCreatedRelationsByProjectID = async (req, res) => {
-
-}
 module.exports = projController;
