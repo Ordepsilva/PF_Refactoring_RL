@@ -17,8 +17,7 @@
     </div>
 </div>
 <div class="grid-row-3">
-
-    <button (click)="project_info()" class="row2-button" style="margin-left: 5%; padding: 10px;"><span>New
+    <button (click)="createArticle()" class="row2-button" style="margin-left: 5%; padding: 10px;"><span>New
             Article</span></button>
 
     <div class="tabs-design">
@@ -26,9 +25,9 @@
         <button style="background-color: none;" class="tabs-buttons" (click)="setLabel1()">Relate Articles</button>
         <button class="tabs-buttons" id="vizualize" (click)="setLabel2()">Visualization</button>
     </div>
-    <div class="colmn3">
-        <div *ngIf="firstLabel">
-            <div class="table-container">
+    <div class="colmn3" style="overflow: auto;">
+     
+            <div class="table-container" style="overflow: auto;" *ngIf="firstLabel">
                 <div *ngIf="!isloaded" class="spinner">
                     <mat-spinner></mat-spinner>
                 </div>
@@ -92,7 +91,7 @@
                 </table>
 
             </div>
-        </div>
+      
         <!--Tentar descobrir o pq do erro-->
         <div id="viz" class="viz" *ngIf="secondLabel" style="width: 100%; height: 100%; outline: none;"></div>
     </div>

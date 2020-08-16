@@ -9,6 +9,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { dataService } from 'src/app/services/dataService';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../project-dialog/dialog.component';
+import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
+import { ArticleDialogComponent } from '../article-dialog/article-dialog.component';
 
 
 
@@ -27,7 +29,6 @@ export class ProjectHomeComponent implements OnInit {
   secondLabel = false;
   dataSource;
   articles = [];
-  //articles = [{ title: "xxx", year: "1975", createdAt: "18/07/98" }];
   displayedColumns: string[] = ['title', 'year', 'createdAt', 'buttons'];
 
   constructor(public router: Router, public articleService: ArticleService, private data_service: dataService, public dialog: MatDialog) {
@@ -44,6 +45,7 @@ export class ProjectHomeComponent implements OnInit {
         console.log(result);
         this.articles = result;
         this.dataSource = new MatTableDataSource(this.articles);
+        this.data_service.articles = this.articles;
         this.dataSource.paginator = this.paginator;
         this.isloaded = true;
         if (this.articles.length == 0) {
@@ -55,9 +57,6 @@ export class ProjectHomeComponent implements OnInit {
         this.isloaded = true;
       }
     );
-    // if(this.articles.length == 0){
-    //document.getElementById("vizualize").setAttribute("disabled", "disabled");
-    // }
   }
 
   applyFilter(event: Event) {
@@ -68,7 +67,7 @@ export class ProjectHomeComponent implements OnInit {
   project_info(): void {
     this.data_service.optionString = "info";
     const dialogRef = this.dialog.open(DialogComponent, {
-      width:"700px",  data: {
+      width: "700px", data: {
         project_id: this.project_id,
       }
     });
@@ -82,7 +81,7 @@ export class ProjectHomeComponent implements OnInit {
     const query = "MATCH (n)-[x]->(p)   return n,p,x";
     let config = {
       container_id: "viz",
-      server_url: "bolt://localhost:11003",
+      server_url: "bolt://localhost:7687",
       server_user: "pedro",
       server_password: "teste",
       labels: {
@@ -124,17 +123,88 @@ export class ProjectHomeComponent implements OnInit {
   }
 
   deleteArticle(element: any) {
-    alert("nothing");
+    this.data_service.optionString = "delete";
+    console.log(element.title);
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      width: "400px", data: {
+        articleID: element.articleID,
+        title:element.title,
+      }
+    }).afterClosed().subscribe(result => {
+      this.dataSource = new MatTableDataSource(this.data_service.articles);
+      this.dataSource.paginator = this.paginator;
+      if (result.result) {
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: "Sucessfully Deleted",
+            type: "success"
+          }
+        })
+      }
+    });
   }
 
   editArticle(element: any) {
-    alert("nothing");
+    console.log(element);
+    this.data_service.optionString = "edit";
+    const dialogRef = this.dialog.open(ArticleDialogComponent, { 
+      width: "500px", data:{
+        article : element,
+      }
+    }).afterClosed().subscribe(result => {
+      this.dataSource = new MatTableDataSource(this.data_service.articles);
+      this.dataSource.paginator = this.paginator;
+      if (result.result) {
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: "Sucessfully Edited",
+            type: "success"
+          }
+        });
+      }
+      if (result.error) {
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: result.error,
+            type: "failed"
+          }
+        });
+      }
+    });
   }
 
   ver(row: any) {
     this.router.navigate(["/projectHome"]);
   }
 
+  createArticle() {
+    this.data_service.optionString = "create";
+    const dialogRef = this.dialog.open(ArticleDialogComponent, { 
+      width: "500px", data:{
+        project_id : this.project_id,
+
+      }
+    }).afterClosed().subscribe(result => {
+      this.dataSource = new MatTableDataSource(this.data_service.articles);
+      this.dataSource.paginator = this.paginator;
+      if (result.result) {
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: "Sucessfully Created",
+            type: "success"
+          }
+        });
+      }
+      if (result.error) {
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: result.error,
+            type: "failed"
+          }
+        });
+      }
+    });
+  }
   // Criar template para criar artigo
   // Eliminar fica igual
   // Editar 
