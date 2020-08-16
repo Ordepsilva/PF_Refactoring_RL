@@ -1,0 +1,88 @@
+
+.mat-dialog-actions{
+    width: 100%;
+    display: flex;
+     justify-content: space-between;
+    
+  }
+
+mat-dialog-content{
+    display: flex;
+    overflow: auto;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+
+}
+
+mat-label{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.one{
+    grid-row: 1;
+    grid-column: 1/2;
+}
+
+.two{
+    grid-row: 2;
+    grid-column: 1;
+ }
+ .three{
+   grid-row:3;
+   grid-column:1;
+ }
+ .four{
+  grid-row:3;
+  grid-column:1;
+}
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+.font{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+  textarea{
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      height: 100px;
+  }
+
+  input{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+  .cancel_button{
+      width: 45%;
+      background-color: red;
+      color: white;
+  }
+  .create_button{
+      width: 45%;
+      background-color: gray;
+      color: white;
+      
+  }
+
+  .create_button:hover {
+    color: white;
+    background-color:  green;
+  }
+
+  .formatDescription{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 15px;
+  }
+
+  ::ng-deep .mat-focused .mat-form-field-label {
+    /*change color of label*/
+    color: darkslategray !important;
+   }
+
+  
+
+  ::ng-deep.mat-form-field-ripple {
+    /*change color of underline when focused*/
+    background-color: darkslategray !important;;
+   }
+   
