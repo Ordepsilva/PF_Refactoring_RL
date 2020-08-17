@@ -23,7 +23,7 @@ export class ProjectsComponent implements OnInit {
 
   displayedColumns: string[] = ['project_name', 'subject', 'createdAt', 'description', 'buttons'];
 
-  constructor(public project_service: ProjectsService, private router: Router, public dialog: MatDialog, private projectC: dataService) { }
+  constructor(public project_service: ProjectsService, private router: Router, public dialog: MatDialog, private data_service: dataService) { }
 
   ngOnInit(): void {
     Cookies.remove('project_id');
@@ -31,7 +31,7 @@ export class ProjectsComponent implements OnInit {
     this.isloaded = false;
     this.project_service.getProjectsForUser().subscribe(
       (result: any) => {
-        this.projectC.projects = result;
+        this.data_service.projects = result;
         this.projects = result;
         this.dataSource = new MatTableDataSource(this.projects);
         this.dataSource.paginator = this.paginator;
@@ -56,11 +56,11 @@ export class ProjectsComponent implements OnInit {
    * Função responsável por abrir o popup de criar projeto e actualizar a tabela
    */
   createproj(): void {
-    this.projectC.optionString = "create";
+    this.data_service.optionString = "create";
     const dialogRef = this.dialog.open(DialogComponent, {
       width: "400px"
     }).afterClosed().subscribe(result => {
-      this.dataSource = new MatTableDataSource(this.projectC.projects);
+      this.dataSource = new MatTableDataSource(this.data_service.projects);
       this.dataSource.paginator = this.paginator;
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
@@ -86,7 +86,7 @@ export class ProjectsComponent implements OnInit {
    * @param projectToEdit projeto que vai ser editado
    */
   editproj(projectToEdit: any): void {
-    this.projectC.optionString = "edit";
+    this.data_service.optionString = "edit";
     const dialogRef = this.dialog.open(DialogComponent, {
       width: "400px", data: {
         project_name: projectToEdit.project_name,
@@ -97,7 +97,7 @@ export class ProjectsComponent implements OnInit {
       }
     }).afterClosed().subscribe(result => {
 
-      this.dataSource = new MatTableDataSource(this.projectC.projects);
+      this.dataSource = new MatTableDataSource(this.data_service.projects);
       this.dataSource.paginator = this.paginator;
 
       if (result.result) {
@@ -113,7 +113,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   deleteproject(element: any) {
-    this.projectC.optionString = "delete";
+    this.data_service.optionString = "delete";
     const dialogRef = this.dialog.open(DialogComponent, {
       width: "400px", data: {
         project_name: element.project_name,
@@ -123,7 +123,7 @@ export class ProjectsComponent implements OnInit {
         date: element.date
       }
     }).afterClosed().subscribe(result => {
-      this.dataSource = new MatTableDataSource(this.projectC.projects);
+      this.dataSource = new MatTableDataSource(this.data_service.projects);
       this.dataSource.paginator = this.paginator;
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {

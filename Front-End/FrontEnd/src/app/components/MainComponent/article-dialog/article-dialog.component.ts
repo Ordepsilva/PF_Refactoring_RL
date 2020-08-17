@@ -1,4 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
+import { ArticleService } from 'src/app/services/article/article.service';
+import { dataService } from 'src/app/services/dataService';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DialogComponent } from '../project-dialog/dialog.component';
+
+export interface Option {
+  value: string;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-article-dialog',
@@ -6,10 +15,124 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./article-dialog.component.css']
 })
 export class ArticleDialogComponent implements OnInit {
+  @Input() articleToCreate: any = {};
+  @Input() articleToEdit: any = {};
 
-  constructor() { }
+  selectedOption: string;
+  edit = false;
+  create = false;
+  delete = false;
+  project_id: string;
+  articleToDelete: any = {};
+  articlesReceived: any = [];
+  articleEdited: any = {};
+  options: Option[] = [{ value: 'abstract', viewValue: 'Abstract' }, { value: 'tags', viewValue: 'Tags' }, { value: 'citation_key', viewValue: 'Citation Key' }, { value: 'edition', viewValue: 'Edition' }, { value: 'year', viewValue: 'Year' }, { value: 'doi', viewValue: 'DOI' }, { value: 'isbn', viewValue: 'ISBN' }, { value: 'author', viewValue: 'Author' }];
 
-  ngOnInit(): void {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogComponent>, public articleService: ArticleService, public data_service: dataService, public dialog: MatDialog) {
+    this.articlesReceived = this.data_service.articles;
+    this.articleToDelete = data;
+    this.articleToEdit = data.article;
+    this.project_id = data.project_id;
   }
 
+  ngOnInit(): void {
+    if (this.data_service.optionString == "edit") {
+      this.edit = true;
+    } else if (this.data_service.optionString == "create") {
+      this.create = true;
+    } else if (this.data_service.optionString == "delete") {
+      this.delete = true;
+      //} else if (this.data_service.optionString == "info") {
+      //this.info = true;
+    }
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close({ nothing: "nothing" });
+  }
+
+  deleteArticle(): void {
+    console.log(this.articlesReceived)
+    try {
+      this.articleService.deleteArticle(this.articleToDelete.articleID).subscribe(result => {
+        let updatedArray = [];
+        for (let article of this.articlesReceived) {
+          if (article.articleID !== this.articleToDelete.articleID) {
+            updatedArray.push(article);
+          }
+        }
+        this.data_service.articles = updatedArray;
+        this.dialogRef.close({ result: result });
+      }), err => {
+        console.log(err.error);
+      };
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  createArticle(): void {
+    this.articleService.createArticle(this.articleToCreate, this.project_id).subscribe(
+      result => {
+        this.data_service.articles.push(result.article);
+        this.dialogRef.close({ result: result });
+      }
+      , err => {
+        console.log(err.error);
+        alert(
+          err.error.error
+        );
+      }
+    )
+  }
+
+  addFormField(): void {
+    if (this.selectedOption == null) {
+      alert("You have to choose an option!");
+    } else {
+      let content = document.getElementById("mat-content");
+      let formfieldToAdd = document.getElementById(this.selectedOption);
+      content.append(formfieldToAdd);
+    }
+  }
+
+  removeFormField(id: string): void {
+    let content = document.getElementById("mat-content");
+    let formfieldToRemove = document.getElementById(id);
+    let formfieldOptions = document.getElementById("formFieldOptions");
+    content.removeChild(formfieldToRemove);
+    formfieldOptions.appendChild(formfieldToRemove);
+  }
+
+  editArticle(): void {
+    this.articleEdited.title = this.articleToEdit.title;
+    this.articleEdited.abstract = this.articleToEdit.abstract;
+    this.articleEdited.author = this.articleToEdit.author;
+    this.articleEdited.doi = this.articleToEdit.doi;
+    this.articleEdited.isbn = this.articleToEdit.isbn;
+    this.articleEdited.edition = this.articleToEdit.edition;
+    this.articleEdited.citation_key = this.articleToEdit.citation_key;
+    this.articleEdited.tags = this.articleToEdit.tags;
+
+    if (this.articleToEdit.year === "") {
+    } else {
+      this.articleEdited.year = this.articleToEdit.year;
+    }
+
+    this.articleService.editProject(this.data.article.articleID, this.articleEdited).subscribe(
+      result => {
+        for (var i = 0; i < this.data_service.articles.length; i++) {
+          if (this.data_service.articles[i].articleID == this.data.article.articleID) {
+            this.articleEdited.createdAt = this.data.article.createdAt;
+            this.articleEdited.articleID = this.data.article.articleID;
+            this.data_service.articles[i] = this.articleEdited;
+          }
+        }
+        this.dialogRef.close({ result: result });
+      }, err => {
+        console.log(err.error);
+        alert(err.error);
+      }
+    );
+  }
 }

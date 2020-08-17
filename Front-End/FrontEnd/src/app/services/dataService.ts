@@ -5,4 +5,5 @@ import { Injectable } from '@angular/core';
 export class dataService {
     projects = [];
     optionString:string;
+    articles = [];
 }

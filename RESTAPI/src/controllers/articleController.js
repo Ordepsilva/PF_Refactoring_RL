@@ -130,7 +130,11 @@ articleController.getArticlesFromProjectID = async (req, res) => {
                     let article = {};
                     article = result.records[i]._fields[0].properties;
                     article.createdAt = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
-                    article.year = result.records[i]._fields[0].properties.year.year.low;
+                    if (result.records[i]._fields[0].properties.year == undefined) {
+                        article.year = "";
+                    } else {
+                        article.year = result.records[i]._fields[0].properties.year.year.low;
+                    }
                     article.articleID = result.records[i]._fields[0].identity.low;
                     articles.push(article);
                 }
@@ -268,10 +272,13 @@ articleController.editArticle = async (req, res) => {
     const articleID = req.params.articleID;
     const findedArticle = Article.findById(articleID);
 
+   
     const { error } = editArticleValidation(req.body);
     if (error) {
+        console.log(error.details[0].message);
         return res.status(400).send(error.details[0].message);
     }
+   
 
     if (findedArticle) {
         (await findedArticle).update(req.body);
@@ -304,15 +311,15 @@ articleController.getRelationsForProjectID = async (req, res) => {
     }
 }
 
-async function verifyIfRelationExists(project_id, relationName){
+async function verifyIfRelationExists(project_id, relationName) {
     const checkIfRelationExist = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b OPTIONAL MATCH (b)-[x:OWN]->(z) WHERE z.name= '" + relationName + "' WITH count(z) as count RETURN count";
-   
+
     const result = await instance.readCypher(checkIfRelationExist);
-    console.log("COUNT: " +  result.records[0]._fields[0].low);
-    if(result.records[0]._fields[0].low == 0){
+    console.log("COUNT: " + result.records[0]._fields[0].low);
+    if (result.records[0]._fields[0].low == 0) {
         console.log("entrei");
         const queryAddNewRelation = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b CREATE (b)-[x:OWN]->(z {name:'" + relationName + "'})";
-        (await instance.writeCypher(queryAddNewRelation)) ;
+        (await instance.writeCypher(queryAddNewRelation));
     }
 }
 

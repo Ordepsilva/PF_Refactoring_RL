@@ -29,7 +29,7 @@ export class DialogComponent implements OnInit {
   projectReceived: any = {};
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<DialogComponent>, public dialog: MatDialog, public router: Router, public proj_service: ProjectsService, private projectTo: dataService
+    public dialogRef: MatDialogRef<DialogComponent>, public dialog: MatDialog, public router: Router, public proj_service: ProjectsService, private data_service: dataService
   ) {
     this.projectEdit = data;
     this.projectTodelete = data;
@@ -37,13 +37,13 @@ export class DialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.projectTo.optionString == "edit") {
+    if (this.data_service.optionString == "edit") {
       this.edit = true;
-    } else if (this.projectTo.optionString == "create") {
+    } else if (this.data_service.optionString == "create") {
       this.create = true;
-    } else if (this.projectTo.optionString == "delete") {
+    } else if (this.data_service.optionString == "delete") {
       this.delete = true;
-    } else if (this.projectTo.optionString == "info") {
+    } else if (this.data_service.optionString == "info") {
       this.getProjectInfo();
       this.info = true;
     }
@@ -58,9 +58,9 @@ export class DialogComponent implements OnInit {
       alert("Please insert a project name!");
     } else if (this.project.subject === "") {
       alert("Please insert a subject");
-    } else if (this.projectTo.optionString == "create") {
+    } else if (this.data_service.optionString == "create") {
       this.createProj();
-    } else if (this.projectTo.optionString == "edit") {
+    } else if (this.data_service.optionString == "edit") {
       this.editProject();
     }
   }
@@ -68,7 +68,8 @@ export class DialogComponent implements OnInit {
   createProj(): void {
     this.proj_service.createProject(this.project).subscribe(
       result => {
-        this.projectTo.projects.push(result.articleCreated);
+        console.log(result.projectCreated);
+        this.data_service.projects.push(result.projectCreated);
         this.dialogRef.close({ result: result });
       }
       , err => {
@@ -91,11 +92,11 @@ export class DialogComponent implements OnInit {
 
     this.proj_service.editProject(this.data.project_id, this.projectToedit).subscribe(
       result => {
-        for (var i = 0; i < this.projectTo.projects.length; i++) {
-          if (this.projectTo.projects[i].project_id == this.data.project_id) {
+        for (var i = 0; i < this.data_service.projects.length; i++) {
+          if (this.data_service.projects[i].project_id == this.data.project_id) {
             this.projectToedit.date = this.data.date;
             this.projectToedit.project_id = this.data.project_id;
-            this.projectTo.projects[i] = this.projectToedit;
+            this.data_service.projects[i] = this.projectToedit;
           }
         }
         this.dialogRef.close({ result: result });
@@ -110,12 +111,12 @@ export class DialogComponent implements OnInit {
     try {
       this.proj_service.deleteProject(this.projectTodelete.project_id).subscribe(result => {
         let updatedArray = [];
-        for (let project of this.projectTo.projects) {
+        for (let project of this.data_service.projects) {
           if (project.project_id !== this.projectTodelete.project_id) {
             updatedArray.push(project);
           }
         }
-        this.projectTo.projects = updatedArray;
+        this.data_service.projects = updatedArray;
         this.dialogRef.close({ result: result });
       }), err => {
         console.log(err.error);

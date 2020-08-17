@@ -21,8 +21,8 @@ export class ArticleService {
 
   constructor(private http: HttpClient) { }
 
-  createProject(article: any) {
-    return this.http.post<any>(endpoint + "create_project", article);
+  createArticle(article: any, project_id:string) {
+    return this.http.post<any>(endpoint + "createArticle/" + project_id, article);
   }
 
   relateArticlesByID(articleID: any, body: any) {
