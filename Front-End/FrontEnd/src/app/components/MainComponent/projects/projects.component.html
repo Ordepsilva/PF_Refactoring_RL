@@ -48,7 +48,7 @@
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="description">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Description </th>
-                    <td mat-cell style="text-align: left; padding-left: 20px; " *matCellDef="let element"
+                    <td mat-cell style="text-align: left; padding-left: 20px; font-style: italic;" *matCellDef="let element"
                         (click)="openProject(element)">
                         <p class="truncate">{{element.description}}</p>
                     </td>

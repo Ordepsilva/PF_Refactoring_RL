@@ -11,15 +11,16 @@
 <div id="formFieldOptions" hidden>
   <tr id="year">
     <th>
-      <mat-form-field>
+      <mat-form-field >
         <mat-label>Year</mat-label>
-        <input [(ngModel)]="articleToCreate.year"  #year matInput>
+        <input [(ngModel)]="articleToCreate.year" #year matInput>
       </mat-form-field>
     </th>
     <td>
-      <button (click)="removeFormField('year'); year.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('year'); year.value=''"
+        style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -32,9 +33,10 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('abstract'); abstract.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('abstract'); abstract.value=''"
+        style="border: none; cursor: pointer;background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -47,9 +49,10 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('author'); author.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('author'); author.value=''"
+        style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -58,13 +61,14 @@
     <td>
       <mat-form-field>
         <mat-label>Tags</mat-label>
-        <input [(ngModel)]="articleToCreate.tags"  #tags placeholder="Example: tag1, tag2" matInput>
+        <input [(ngModel)]="articleToCreate.tags" #tags placeholder="Example: tag1, tag2" matInput>
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('tags'); tags.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('tags'); tags.value=''"
+        style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -77,9 +81,10 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('citation_key'); citation_key.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('citation_key'); citation_key.value=''"
+        style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -92,9 +97,10 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('edition'); edition.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('edition'); edition.value=''"
+        style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -107,9 +113,10 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('doi'); doi.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('doi'); doi.value=''"
+        style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -122,9 +129,10 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('isbn'); isbn.value=''" style="border: none; background-color: red;"><span style="color: white;"
+      <button (click)="removeFormField('isbn'); isbn.value=''"
+        style="border: none; cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
-          close
+          delete
         </span>
       </button>
     </td>
@@ -133,20 +141,25 @@
 </div>
 
 <div class='container' *ngIf="create">
-  <h1 mat-dialog-title
-    style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
-    New Article </h1>
+  <div mat-dialog-title style="display: flex; justify-content: space-between; height: 100px;">
+    <h1
+      style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
+      New Article </h1>
+    <div>
+      <mat-form-field>
+        <mat-select [(ngModel)]="selectedOption" placeholder="Add label">
+          <mat-option *ngFor="let option of options" [value]="option.value">
+            {{option.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button style="outline: none;" (click)="addFormField()"><span class="material-icons"
+          style="background-color: transparent; color: green;">add</span></button>
+    </div>
+  </div>
   <div id="mat-content" mat-dialog-content>
     <table style="width: 100%; height: 100%;">
       <tr id="dropdownButton">
-        <mat-form-field>
-          <mat-select [(ngModel)]="selectedOption" placeholder="New label">
-            <mat-option *ngFor="let option of options" [value]="option.value">
-              {{option.viewValue}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button style="outline: none;" (click)="addFormField()"><span class="material-icons">add</span></button>
       </tr>
       <tr>
         <th style="text-align: left;">
@@ -156,7 +169,6 @@
           </mat-form-field>
         </th>
       </tr>
-
     </table>
   </div>
   <div mat-dialog-actions class='mat-dialog-actions'>
@@ -184,45 +196,45 @@
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>Year</mat-label>
-          <input [(ngModel)]="articleToEdit.year" matInput >
+          <input [(ngModel)]="articleToEdit.year" matInput>
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>Author</mat-label>
-          <input [(ngModel)]="articleToEdit.author" matInput >
+          <input [(ngModel)]="articleToEdit.author" matInput>
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>DOI</mat-label>
-          <input [(ngModel)]="articleToEdit.doi" matInput >
+          <input [(ngModel)]="articleToEdit.doi" matInput>
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>ISBN</mat-label>
-          <input [(ngModel)]="articleToEdit.isbn" matInput >
+          <input [(ngModel)]="articleToEdit.isbn" matInput>
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>Citation Key</mat-label>
-          <input [(ngModel)]="articleToEdit.citation_key" matInput >
+          <input [(ngModel)]="articleToEdit.citation_key" matInput>
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>Edition</mat-label>
-          <input [(ngModel)]="articleToEdit.edition" matInput >
+          <input [(ngModel)]="articleToEdit.edition" matInput>
         </mat-form-field>
       </tr>
       <tr>
-        <mat-form-field >
+        <mat-form-field>
           <mat-label>Tags</mat-label>
-          <input [(ngModel)]="articleToEdit.tags" matInput >
+          <input [(ngModel)]="articleToEdit.tags" matInput>
         </mat-form-field>
       </tr>
     </table>

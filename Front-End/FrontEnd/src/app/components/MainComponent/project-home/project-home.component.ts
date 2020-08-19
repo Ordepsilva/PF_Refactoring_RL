@@ -42,7 +42,6 @@ export class ProjectHomeComponent implements OnInit {
 
     this.articleService.getArticlesFromProjectID(Cookies.get('project_id')).subscribe(
       (result: any) => {
-        console.log(result);
         this.articles = result;
         this.dataSource = new MatTableDataSource(this.articles);
         this.data_service.articles = this.articles;
@@ -114,12 +113,15 @@ export class ProjectHomeComponent implements OnInit {
   setLabel1() {
     this.firstLabel = true;
     this.secondLabel = false;
+    document.getElementById("paginator").style.display="block";
   }
 
   setLabel2() {
+    this.loadViz();
     this.firstLabel = false;
     this.secondLabel = true;
-    this.loadViz();
+
+    document.getElementById("paginator").style.display="none";
   }
 
   deleteArticle(element: any) {
@@ -128,7 +130,7 @@ export class ProjectHomeComponent implements OnInit {
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       width: "400px", data: {
         articleID: element.articleID,
-        title:element.title,
+        title: element.title,
       }
     }).afterClosed().subscribe(result => {
       this.dataSource = new MatTableDataSource(this.data_service.articles);
@@ -147,9 +149,9 @@ export class ProjectHomeComponent implements OnInit {
   editArticle(element: any) {
     console.log(element);
     this.data_service.optionString = "edit";
-    const dialogRef = this.dialog.open(ArticleDialogComponent, { 
-      width: "500px", data:{
-        article : element,
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      width: "500px", data: {
+        article: element,
       }
     }).afterClosed().subscribe(result => {
       this.dataSource = new MatTableDataSource(this.data_service.articles);
@@ -179,9 +181,9 @@ export class ProjectHomeComponent implements OnInit {
 
   createArticle() {
     this.data_service.optionString = "create";
-    const dialogRef = this.dialog.open(ArticleDialogComponent, { 
-      width: "500px", data:{
-        project_id : this.project_id,
+    const dialogRef = this.dialog.open(ArticleDialogComponent, {
+      width: "500px", data: {
+        project_id: this.project_id,
 
       }
     }).afterClosed().subscribe(result => {
