@@ -1,0 +1,46 @@
+{
+    "pageOptions": [
+        5,
+        10,
+        20
+    ],
+    "createArticleMenu": [
+        {
+            "value": "abstract",
+            "viewValue": "Abstract"
+        },
+        {
+            "value": "tags",
+            "viewValue": "Tags"
+        },
+        {
+            "value": "citation_key",
+            "viewValue": "Citation Key"
+        },
+        {
+            "value": "edition",
+            "viewValue": "Edition"
+        },
+        {
+            "value": "year",
+            "viewValue": "Year"
+        },
+        {
+            "value": "doi",
+            "viewValue": "DOI"
+        },
+        {
+            "value": "isbn",
+            "viewValue": "ISBN"
+        },
+        {
+            "value": "author",
+            "viewValue": "Author"
+        }
+    ],
+    "neo4j": {
+        "user": "pedro",
+        "password": "teste",
+        "server_url": "bolt://localhost:7687"
+    }
+}
