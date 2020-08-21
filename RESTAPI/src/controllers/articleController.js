@@ -212,8 +212,9 @@ articleController.relateOneToMany = async (req, res) => {
 }
 
 articleController.getConfigForRunNeoVis = async (req, res) => {
+    console.log(req.body);
     const project_id = req.params.project_id;
-    const query = "Match (a:Projeto)-[x]->(b:Article) where ID(a)=" + project_id + " WITH a,b,x OPTIONAL MATCH (b:Article)-[z]->(c:Article)  RETURN a,x,z,b,c "
+    const query = "Match (a:Project)-[x]->(b:Article) where ID(a)=" + project_id + " WITH a,b,x OPTIONAL MATCH (b:Article)-[z]->(c:Article)  RETURN a,x,z,b,c "
     const config = {
         container_id: "viz",
         server_url: req.body.server_url,
@@ -234,14 +235,13 @@ articleController.getConfigForRunNeoVis = async (req, res) => {
             },
         },
         relationships: {
-            [NeoVis.NEOVIS_DEFAULT_CONFIG]: {
-                "thickness": "count"
-            }
+           
         },
         arrows: true,
         thickness: "count",
         initial_cypher: query
     };
+    console.log(config);
     return res.status(200).json(config);
 }
 
@@ -272,13 +272,13 @@ articleController.editArticle = async (req, res) => {
     const articleID = req.params.articleID;
     const findedArticle = Article.findById(articleID);
 
-   
+
     const { error } = editArticleValidation(req.body);
     if (error) {
         console.log(error.details[0].message);
         return res.status(400).send(error.details[0].message);
     }
-   
+
 
     if (findedArticle) {
         (await findedArticle).update(req.body);
@@ -311,13 +311,25 @@ articleController.getRelationsForProjectID = async (req, res) => {
     }
 }
 
+articleController.removeRelationBetweenArticles = async (req, res) => {
+    articleID = req.params.articleID;
+    targetArticle = req.body.articleID;
+    relationToRemove = req.body.relationName;
+    queryRemoveRelation = "MATCH (a:Article)-[r:" + "relationName" + "]-(b:Article) WHERE ID(a)=" + articleID + " and ID(b)=" + targetArticle + " DELETE r";
+    try {
+        instance.writeCypher(queryRemoveRelation);
+        return res.status(200).json({ success: "Relation removed." });
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
+}
+
 async function verifyIfRelationExists(project_id, relationName) {
     const checkIfRelationExist = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b OPTIONAL MATCH (b)-[x:OWN]->(z) WHERE z.name= '" + relationName + "' WITH count(z) as count RETURN count";
-
+    
     const result = await instance.readCypher(checkIfRelationExist);
-    console.log("COUNT: " + result.records[0]._fields[0].low);
     if (result.records[0]._fields[0].low == 0) {
-        console.log("entrei");
         const queryAddNewRelation = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b CREATE (b)-[x:OWN]->(z {name:'" + relationName + "'})";
         (await instance.writeCypher(queryAddNewRelation));
     }
