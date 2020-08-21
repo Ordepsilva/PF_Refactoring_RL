@@ -3,7 +3,7 @@ import { ArticleService } from 'src/app/services/article/article.service';
 import { dataService } from 'src/app/services/dataService';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogComponent } from '../project-dialog/dialog.component';
-
+import * as config from 'src/app/configuration/configuration.json';
 export interface Option {
   value: string;
   viewValue: string;
@@ -26,8 +26,7 @@ export class ArticleDialogComponent implements OnInit {
   articleToDelete: any = {};
   articlesReceived: any = [];
   articleEdited: any = {};
-  options: Option[] = [{ value: 'abstract', viewValue: 'Abstract' }, { value: 'tags', viewValue: 'Tags' }, { value: 'citation_key', viewValue: 'Citation Key' }, { value: 'edition', viewValue: 'Edition' }, { value: 'year', viewValue: 'Year' }, { value: 'doi', viewValue: 'DOI' }, { value: 'isbn', viewValue: 'ISBN' }, { value: 'author', viewValue: 'Author' }];
-
+  options: Option[] = config.createArticleMenu;
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogComponent>, public articleService: ArticleService, public data_service: dataService, public dialog: MatDialog) {
     this.articlesReceived = this.data_service.articles;
     this.articleToDelete = data;
@@ -42,8 +41,6 @@ export class ArticleDialogComponent implements OnInit {
       this.create = true;
     } else if (this.data_service.optionString == "delete") {
       this.delete = true;
-      //} else if (this.data_service.optionString == "info") {
-      //this.info = true;
     }
   }
 
