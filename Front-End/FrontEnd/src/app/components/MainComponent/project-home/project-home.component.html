@@ -45,7 +45,7 @@
 
                 <ng-container matColumnDef="title">
                     <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Title</th>
-                    <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="ver(element)">
+                    <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="openProject(element)">
                         {{element.title}} </td>
                 </ng-container>
 
@@ -53,13 +53,13 @@
                 <ng-container matColumnDef="year">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Year </th>
                     <td mat-cell style="text-align: center;" *matCellDef="let element"
-                        (click)="ver(element)"> {{element.year}} </td>
+                        (click)="openProject(element)"> {{element.year}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="createdAt">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Created At </th>
-                    <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="ver(element)">
+                    <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="openProject(element)">
                         {{element.createdAt}} </td>
                 </ng-container>
 
@@ -93,10 +93,12 @@
 
         <!--Tentar descobrir o pq do erro-->
         <div id="viz" class="viz" *ngIf="secondLabel" style="width: 100%; height: 100%; outline: none;"></div>
+
+        <div *ngIf = "relateLabel"></div>
     </div>
 
     <div id="paginator" class="pagination_margin" >
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
     </div>
 
 </div>

@@ -21,7 +21,7 @@ export class ArticleService {
 
   constructor(private http: HttpClient) { }
 
-  createArticle(article: any, project_id:string) {
+  createArticle(article: any, project_id: string) {
     return this.http.post<any>(endpoint + "createArticle/" + project_id, article);
   }
 
@@ -55,8 +55,8 @@ export class ArticleService {
     return this.http.delete<any>(endpoint + articleID);
   }
 
-  getConfigForRunNeoVis(project_id: any) {
-    return this.http.get<any>(endpoint + "getConfigForRunNeoVis/" + project_id);
+  getConfigForRunNeoVis(project_id: any, body: any) {
+    return this.http.post<any>(endpoint + "getConfigForRunNeoVis/" + project_id, body);
   }
 
   editProject(articleID: any, article: any) {

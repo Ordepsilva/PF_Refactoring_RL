@@ -11,8 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../project-dialog/dialog.component';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import { ArticleDialogComponent } from '../article-dialog/article-dialog.component';
-
-
+import * as config from 'src/app/configuration/configuration.json';
 
 @Component({
   selector: 'app-project-home',
@@ -21,28 +20,34 @@ import { ArticleDialogComponent } from '../article-dialog/article-dialog.compone
 })
 export class ProjectHomeComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-
+  //
   project_name;
   project_id;
-  isloaded = true;
+  isloaded = false;
+  //tabs
   firstLabel = false;
   secondLabel = false;
+  relateLabel = false;
+  //DATA
   dataSource;
   articles = [];
+  //Config
   displayedColumns: string[] = ['title', 'year', 'createdAt', 'buttons'];
+  pageSizeOptions: any = config.pageOptions;
 
   constructor(public router: Router, public articleService: ArticleService, private data_service: dataService, public dialog: MatDialog) {
 
   }
+
   ngOnInit(): void {
     this.project_name = Cookies.get('project_name');
     this.project_id = Cookies.get('project_id');
     this.firstLabel = true;
     this.secondLabel = false;
-
     this.articleService.getArticlesFromProjectID(Cookies.get('project_id')).subscribe(
       (result: any) => {
         this.articles = result;
+        console.log(result);
         this.dataSource = new MatTableDataSource(this.articles);
         this.data_service.articles = this.articles;
         this.dataSource.paginator = this.paginator;
@@ -72,56 +77,46 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  loadViz() {
-    const queryteste = "Match (a:Project)-[x]->(b:Article) where ID(a)=" + Cookies.get('project_id') + " WITH a,b,x OPTIONAL MATCH (b:Article)-[z]->(c:Article)   return a,x,z,b,c "
-    const queryquery = "Match (a:Projeto)-[x]->(b:Article) where a.project_id='" + Cookies.get('project_id') + "' return a,x,b  UNION  Match(a:Article)-[x]->(b:Article) return a,x,b"
-    const newquery = "Match (a:Projeto)-[x]->(b:Article) where a.project_id='" + Cookies.get('project_id') + "' OPTIONal MATCH (b:Article)-[r]->(b)  return a,x,b"
-    const changequery = "MATCH (n:Projeto),(m:Article) WHERE n.project_id='" + Cookies.get('project_id') + "' OPTIONAL MATCH (n)-[r]->(m) RETURN n,r,m;";
-    const query = "MATCH (n)-[x]->(p)   return n,p,x";
-    let config = {
-      container_id: "viz",
-      server_url: "bolt://localhost:7687",
-      server_user: "pedro",
-      server_password: "teste",
-      labels: {
-        "Article": {
-          "caption": "title",
-        },
-        "Projeto": {
-          "caption": "project_name",
-          "title_properties": [
-            "project_name",
-            "createdAt",
-            "description",
-            "subject"
-          ]
-        }
+  loadNeoVizualization() {
+    let neoVizConfig;
+    this.isloaded = false;
+    try {
+      this.articleService.getConfigForRunNeoVis(this.project_id, config.neo4j).subscribe((result: any) => {
+        this.isloaded = true;
+        neoVizConfig = result;
+        neoVizConfig.relationships = {
+          [NeoVis.NEOVIS_DEFAULT_CONFIG]: {
+            "thickness": "count"
+          }
+        };
+        let viz = new NeoVis.default(neoVizConfig);
+        viz.render();
       },
-      relationships: {
-        [NeoVis.NEOVIS_DEFAULT_CONFIG]: {
-          "thickness": "count"
+        (err: HttpErrorResponse) => {
+          console.log(err);
+          alert(err);
+          this.isloaded = false;
+          this.setLabel1();
         }
-      },
-      arrows: true,
-      thickness: "count",
-      initial_cypher: queryteste
+      );
+    } catch (err) {
+      console.log(err);
     }
-    let viz = new NeoVis.default(config);
-    viz.render();
   }
 
   setLabel1() {
     this.firstLabel = true;
     this.secondLabel = false;
-    document.getElementById("paginator").style.display="block";
+    this.isloaded = true;
+    document.getElementById("paginator").style.display = "block";
   }
 
   setLabel2() {
-    this.loadViz();
+    this.loadNeoVizualization();
     this.firstLabel = false;
     this.secondLabel = true;
 
-    document.getElementById("paginator").style.display="none";
+    document.getElementById("paginator").style.display = "none";
   }
 
   deleteArticle(element: any) {
@@ -175,7 +170,7 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  ver(row: any) {
+  openProject(row: any) {
     this.router.navigate(["/projectHome"]);
   }
 
@@ -207,12 +202,6 @@ export class ProjectHomeComponent implements OnInit {
       }
     });
   }
-  // Criar template para criar artigo
-  // Eliminar fica igual
-  // Editar 
-  // Template para project Info
-  // loadViz arranjar maneira de o retornar do backend e apenas chamar a config para dar render
-  // Overflow na tabela para aparecer o scroll
-  // meter a parte de cima estática da tabela
+
 }
 
