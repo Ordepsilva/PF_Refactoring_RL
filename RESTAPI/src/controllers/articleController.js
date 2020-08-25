@@ -189,7 +189,7 @@ articleController.deleteArticle = async (req, res) => {
 }
 
 articleController.relateOneToMany = async (req, res) => {
-    const project_id = req.params.projectID;
+    const project_id = req.params.project_id;
     const articleID = req.body.articleID;
     const articlesToRelate = req.body.articles;
     const relationName = req.body.relationName;
@@ -212,7 +212,6 @@ articleController.relateOneToMany = async (req, res) => {
 }
 
 articleController.getConfigForRunNeoVis = async (req, res) => {
-    console.log(req.body);
     const project_id = req.params.project_id;
     const query = "Match (a:Project)-[x]->(b:Article) where ID(a)=" + project_id + " WITH a,b,x OPTIONAL MATCH (b:Article)-[z]->(c:Article)  RETURN a,x,z,b,c "
     const config = {
@@ -235,13 +234,12 @@ articleController.getConfigForRunNeoVis = async (req, res) => {
             },
         },
         relationships: {
-           
+
         },
         arrows: true,
         thickness: "count",
         initial_cypher: query
     };
-    console.log(config);
     return res.status(200).json(config);
 }
 
@@ -291,7 +289,7 @@ articleController.editArticle = async (req, res) => {
 articleController.getRelationsForProjectID = async (req, res) => {
     const project_id = req.params.project_id;
     const queryToGetRelations = "MATCH (n:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(n)=" + project_id + " WITH b OPTIONAL MATCH  (b)-[x:OWN]->(z) RETURN z"
-
+    console.log(queryToGetRelations);
     try {
         instance.readCypher(queryToGetRelations).then(result => {
             if (result) {
@@ -325,9 +323,33 @@ articleController.removeRelationBetweenArticles = async (req, res) => {
     }
 }
 
+articleController.getArticlesRelatedToArticleID = async (req, res) => {
+    const articleID = req.params.articleID;
+    const queryToGetArticles = "MATCH (n:Article)-[r]-(n2:Article) WHERE ID(n)=" + articleID + " RETURN n2, type(r) as relationName";
+    try {
+        instance.readCypher(queryToGetArticles).then(result => {
+            if (result) {
+                let articles = [];
+                for(let i=0; i<result.records.length ; i++){
+                    let articleRelated = {};
+                    articleRelated.article = result.records[i]._fields[0].properties;
+                    articleRelated.article.articleID = result.records[i]._fields[0].identity.low;
+                    articleRelated.relationName = result.records[i]._fields[1];
+                    articles.push(articleRelated);
+                }
+                console.log(result);
+                return res.status(200).json(articles);
+            }
+        })
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
+}
+
 async function verifyIfRelationExists(project_id, relationName) {
     const checkIfRelationExist = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b OPTIONAL MATCH (b)-[x:OWN]->(z) WHERE z.name= '" + relationName + "' WITH count(z) as count RETURN count";
-    
+
     const result = await instance.readCypher(checkIfRelationExist);
     if (result.records[0]._fields[0].low == 0) {
         const queryAddNewRelation = "MATCH (p:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(p)=" + project_id + " WITH b CREATE (b)-[x:OWN]->(z {name:'" + relationName + "'})";

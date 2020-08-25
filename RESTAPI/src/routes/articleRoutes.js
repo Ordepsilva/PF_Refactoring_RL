@@ -9,11 +9,13 @@ router.post('/relateArticlesByID/:project_id', authorized(), articleController.r
 
 router.post('/addCommentToArticleByID/:articleID', authorized(), articleController.addCommentToArticleByID);
 
-router.post('/relateOneToMany/:articleID', authorized(), articleController.relateOneToMany);
+router.post('/relateOneToMany/:project_id', authorized(), articleController.relateOneToMany);
 
 router.get('/getArticleInfoByID/:articleID', authorized(), articleController.getArticleInfoByID);
 
 router.get('/getRelationsForProjectID/:project_id', authorized(), articleController.getRelationsForProjectID);
+
+router.get('/getArticlesRelatedToArticleID/:articleID', authorized(), articleController.getArticlesRelatedToArticleID);
 
 router.get('/getArticlesFromProjectID/:project_id', authorized(), articleController.getArticlesFromProjectID);
 
