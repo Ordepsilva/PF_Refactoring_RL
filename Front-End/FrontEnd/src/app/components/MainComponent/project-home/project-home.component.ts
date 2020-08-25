@@ -3,7 +3,7 @@ import * as NeoVis from 'src/app/components/MainComponent/project-home/neovis';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 import { ArticleService } from 'src/app/services/article/article.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { dataService } from 'src/app/services/dataService';
@@ -12,6 +12,11 @@ import { DialogComponent } from '../project-dialog/dialog.component';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import { ArticleDialogComponent } from '../article-dialog/article-dialog.component';
 import * as config from 'src/app/configuration/configuration.json';
+import { SelectionModel } from '@angular/cdk/collections';
+export interface Option {
+  value: string;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-project-home',
@@ -20,19 +25,26 @@ import * as config from 'src/app/configuration/configuration.json';
 })
 export class ProjectHomeComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  //
   project_name;
   project_id;
+  relationOption: string;
+  inputRelationName: string;
   isloaded = false;
   //tabs
-  firstLabel = false;
-  secondLabel = false;
-  relateLabel = false;
+  firstTab = false;
+  secondTab = false;
+  thirdTab = false;
   //DATA
   dataSource;
+  articleSource;
   articles = [];
+  relations: Option[] = [];
   //Config
   displayedColumns: string[] = ['title', 'year', 'createdAt', 'buttons'];
+  displayedArticleColumns: string[] = ['select', 'title']
+  selection = new SelectionModel<any>(true, []);
+  selectedArticle = new SelectionModel<any>(false);
+
   pageSizeOptions: any = config.pageOptions;
 
   constructor(public router: Router, public articleService: ArticleService, private data_service: dataService, public dialog: MatDialog) {
@@ -42,12 +54,12 @@ export class ProjectHomeComponent implements OnInit {
   ngOnInit(): void {
     this.project_name = Cookies.get('project_name');
     this.project_id = Cookies.get('project_id');
-    this.firstLabel = true;
-    this.secondLabel = false;
+    this.firstTab = true;
+    this.isloaded = false;
+
     this.articleService.getArticlesFromProjectID(Cookies.get('project_id')).subscribe(
       (result: any) => {
         this.articles = result;
-        console.log(result);
         this.dataSource = new MatTableDataSource(this.articles);
         this.data_service.articles = this.articles;
         this.dataSource.paginator = this.paginator;
@@ -66,6 +78,28 @@ export class ProjectHomeComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
   project_info(): void {
@@ -96,7 +130,7 @@ export class ProjectHomeComponent implements OnInit {
           console.log(err);
           alert(err);
           this.isloaded = false;
-          this.setLabel1();
+          this.setTab1();
         }
       );
     } catch (err) {
@@ -104,18 +138,25 @@ export class ProjectHomeComponent implements OnInit {
     }
   }
 
-  setLabel1() {
-    this.firstLabel = true;
-    this.secondLabel = false;
+  setTab1() {
+    this.firstTab = true;
+    this.secondTab = false;
+    this.thirdTab = false;
     this.isloaded = true;
     document.getElementById("paginator").style.display = "block";
   }
-
-  setLabel2() {
+  setTab2() {
+    this.firstTab = false;
+    this.secondTab = true;
+    this.thirdTab = false;
+    this.loadTablesToRelateArticles();
+    document.getElementById("paginator").style.display = "none";
+  }
+  setTab3() {
     this.loadNeoVizualization();
-    this.firstLabel = false;
-    this.secondLabel = true;
-
+    this.firstTab = false;
+    this.secondTab = false;
+    this.thirdTab = true;
     document.getElementById("paginator").style.display = "none";
   }
 
@@ -203,5 +244,72 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
+  loadTablesToRelateArticles() {
+    this.relations = [];
+    this.articleSource = new MatTableDataSource(this.articles);
+    try {
+      this.articleService.getRelationsForProjectID(this.project_id).subscribe(result => {
+        if (result) {
+          for (let i = 0; i < result.length; i++) {
+            this.relations.push({ value: result[i], viewValue: result[i]})
+          }
+        }
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  newRelationName() {
+    document.getElementById("inputRelation").style.display = "block";
+    document.getElementById('dropdownRelationName').style.display = "none";
+  }
+
+  closeRelationInput(inputName: string) {
+    if (inputName == undefined) {
+      alert("You need to write the relation name");
+    } else {
+      let relationName = {
+        value: inputName, viewValue: inputName
+      };
+      this.relations.push(relationName);
+    }
+    document.getElementById("inputRelation").style.display = "none";
+    document.getElementById('dropdownRelationName').style.display = "block";
+  }
+
+  relateArticles() {
+    let articlesIDToRelate: any = [{}];
+    let articleID: any;
+    let body: any = {};
+
+    for (let i = 0; i < this.selection.selected.length; i++) {
+      articlesIDToRelate[i] = { articleID: this.selection.selected[i].articleID };
+    }
+    articleID = this.selectedArticle.selected[0].articleID;
+
+    body.articles = articlesIDToRelate;
+    body.articleID = articleID;
+    body.relationName = this.relationOption;
+
+    try {
+      this.articleService.relateOneToMany(this.project_id, body).subscribe(result => {
+        if (result) {
+          const dialogRef = this.dialog.open(InfoDialogComponent, {
+            width: "400px", data: {
+              message: result.success,
+              type: "success"
+            }
+          });
+          this.selectedArticle = new SelectionModel<any>(false);
+          this.selection = new SelectionModel<any>(true, []);
+        }
+      }
+      );
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  }
 }
 

@@ -316,4 +316,40 @@
        border: 0;
        outline: none;
      }
-  
+     /** Tab Relate Articles **/
+     .table-relate-container{
+      height: 100%; width: 40%; align-items: center; display: flex;
+     }
+     
+  .table-relate-articles{
+    height: 90%; width: 100%; border: 1px solid black; margin-left: 10px;  margin-top: 10px;  margin-right: 10px;  margin-bottom: 10px; overflow: auto; 
+  }
+.middle-container{
+  height: 100%; width: 20%; display:flex; align-items: center; padding-left: 10px; padding-right: 10px;
+}
+.dropdown-relation{
+  border: none; cursor: pointer; text-align: center; width: 100%; background-color: transparent;
+}
+.dropdown-relation:focus{
+  border: none;
+}
+.dropdown-relation:hover{
+ background-color: darkslategray;
+ color: white;
+}
+.onHoverBackground:hover{
+background-color: darkslategray;
+color: white;
+}
+.relate-articles-button{
+padding: 10px;
+background-color: darkslategray;
+color: white;
+width: 100%;
+border-radius: 20px;
+border: none;
+cursor: pointer;
+}
+.relate-articles-button:focus{
+  outline: none;
+}

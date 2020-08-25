@@ -35,6 +35,7 @@ import { InfoDialogComponent } from './components/MainComponent/info-dialog/info
 import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import { ArticleDialogComponent } from './components/MainComponent/article-dialog/article-dialog.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 @NgModule({
   declarations: [
     AppComponent,
@@ -71,7 +72,8 @@ import { ArticleDialogComponent } from './components/MainComponent/article-dialo
     MatTableModule,
     MatMenuModule,
     NgxPaginationModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCheckboxModule
   ],
   providers: [AuthenticationServiceService, ProjectsService, dataService,  { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true }],
   bootstrap: [AppComponent]
