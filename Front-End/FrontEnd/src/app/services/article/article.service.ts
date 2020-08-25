@@ -50,7 +50,6 @@ export class ArticleService {
     return this.http.get<any>(endpoint + "getCommentsFromArticleID/" + articleID);
   }
 
-
   deleteArticle(articleID: any) {
     return this.http.delete<any>(endpoint + articleID);
   }
@@ -62,7 +61,10 @@ export class ArticleService {
   editProject(articleID: any, article: any) {
     return this.http
       .put<any>(endpoint + "editArticle/" + articleID, article);
+  }
 
+  getRelationsForProjectID(project_id:any){
+    return this.http.get<any>(endpoint + "getRelationsForProjectID/" + project_id);
   }
 }
 
