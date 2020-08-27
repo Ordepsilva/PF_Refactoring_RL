@@ -11,6 +11,12 @@ router.post('/addCommentToArticleByID/:articleID', authorized(), articleControll
 
 router.post('/relateOneToMany/:project_id', authorized(), articleController.relateOneToMany);
 
+router.post('/removeRelationBetweenArticles/:articleID', authorized(), articleController.removeRelationBetweenArticles);
+
+router.post('/getConfigForRunNeoVis/:project_id', authorized(), articleController.getConfigForRunNeoVis);
+
+router.post('/getConfigForArticleID/:articleID',authorized(), articleController.getConfigForArticleID);
+
 router.get('/getArticleInfoByID/:articleID', authorized(), articleController.getArticleInfoByID);
 
 router.get('/getRelationsForProjectID/:project_id', authorized(), articleController.getRelationsForProjectID);
@@ -21,12 +27,10 @@ router.get('/getArticlesFromProjectID/:project_id', authorized(), articleControl
 
 router.get('/getCommentsFromArticleID/:articleID', authorized(), articleController.getCommentsFromArticleID);
 
-router.post('/getConfigForRunNeoVis/:project_id', authorized(), articleController.getConfigForRunNeoVis);
-
 router.put('/editArticle/:articleID', authorized(), articleController.editArticle);
 
 router.delete('/:articleID', authorized(), articleController.deleteArticle);
 
-router.delete('/removeRelationBetweenArticles/:articleID', authorized(), articleController.removeRelationBetweenArticles);
+router.delete('/deleteComment/:commentID', authorized(), articleController.deleteCommentFromArticleID);
 
 module.exports = router;
