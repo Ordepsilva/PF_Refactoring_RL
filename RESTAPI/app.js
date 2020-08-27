@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const app = express();
-var session = require('./middlewares/session');
-const routes = require('./routes/generalRoutes');
+var session = require('./src/middlewares/session');
+const routes = require('./src/routes/generalRoutes');
+
 //Middlewares
 app.use(cors());
 app.use(bodyparser.json());
