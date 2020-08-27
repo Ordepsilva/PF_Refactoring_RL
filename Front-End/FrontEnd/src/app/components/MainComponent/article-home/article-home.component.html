@@ -1,0 +1,206 @@
+<div class="mainContent">
+    <div class="row1">
+        <div style="display: flex; align-items: center; width: 10%; justify-content: space-between;">
+            <span class="material-icons" title="Go back" style="cursor: pointer;" routerLink="/projectHome">
+                arrow_back_ios
+            </span>
+        </div>
+        <div class="tabs-design" style="margin-left: 5%;display: flex;">
+            <div style="width: 10%; text-align: left; margin-left: 1%;">
+            </div>
+            <div style="width: 90%;">
+                <button style="background-color: none;" class="tabs-buttons" (click)="setTabAbout()">About</button>
+                <button style="background-color: none;" class="tabs-buttons" (click)="setTabRelatedArticles()">Related
+                    Articles</button>
+                <button style="background-color: none;" class="tabs-buttons"
+                    (click)="setTabVisualize()">Visualize</button>
+            </div>
+        </div>
+    </div>
+    <div class="row2">
+        <div class="row2-main-content">
+            <div style="width: 100%; height: 100%; display: flex;" *ngIf="tabAbout">
+                <div class="column1">
+                    <div style="width: 100%; height: 100%; margin-left: 10px; overflow-y: auto;">
+                        <div style="height: 5%;"></div>
+                        <mat-divider></mat-divider>
+                        <mat-accordion>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        Title
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.title}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title>
+                                        Abstract
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+                                <p> {{article.abstract}} </p>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black; width: 30%;">
+                                        Year
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.year}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black; width: 30%;">
+                                        DOI
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.DOI}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        ISBN
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.ISBN}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        Authors
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.authors}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        Edition
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+                                {{article.edition}}
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        Tags
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.tags}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        Citation key
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.citation_key}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel disabled>
+                                <mat-expansion-panel-header style="color: #888888;">
+                                    <mat-panel-title style="color: black;width: 30%;">
+                                        Created At
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                    {{article.createdAt}}
+                                </mat-expansion-panel-header>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                    <div></div>
+                </div>
+                <div style="width: 10%; height: 100%;"></div>
+                <div class="column2">
+                    <div
+                        style="width: 100%; height: 10%;display: flex; justify-content: space-between; margin-top: 1%;align-items: center;">
+                        <div style="margin-left:10px"> <span>Comments:</span></div>
+                        <div style="margin-right: 7%;"> <button class="button-comment" (click)="createNewComment()"
+                                style="cursor: pointer;">+ New
+                                Comment</button></div>
+                    </div>
+                    <div style="width: 100%; height: 90%; overflow-y: auto;">
+                        <div style="width: auto; margin-left: 1%; margin-right: 2%; margin-bottom: 1%; height: auto;">
+                            <mat-card *ngFor="let comment of comments" style="margin: 5px;">
+                                <mat-card-content>
+                                    <span>{{comment.createdAt}}</span>
+                                    <p>{{comment.commentary}}</p>
+                                    <div style="text-align: right;">
+                                        <mat-icon class="project_buttons" (click)="deleteComment(comment)"
+                                            style=" color: red; cursor: pointer;" aria-hidden="true">delete
+                                        </mat-icon>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                            <mat-card *ngIf="comments.length ==0" style="margin: 5px;">
+                                <span>0 comments created</span>
+                            </mat-card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="viz" class="viz" *ngIf="tabVisualize" style="width: 100%; height: 100%; outline: none;"></div>
+            <div class="table-container" *ngIf="tabRelatedArticles">
+                <div *ngIf="!isloaded" class="spinner">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <table *ngIf="isloaded" class="mat-elevation-z8" mat-table [dataSource]="dataSource">
+                    <ng-container matColumnDef="title">
+                        <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Title</th>
+                        <td mat-cell style="text-align: left; " *matCellDef="let element"
+                            (click)="openArticle(element)">
+                            {{element.article.title}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="relationName">
+                        <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Relation Type </th>
+                        <td mat-cell style="text-align: center;" *matCellDef="let element"
+                            (click)="openArticle(element)">
+                            {{element.relationName}} </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="buttons">
+                        <th mat-header-cell style="text-align: center;" *matHeaderCellDef>
+                        </th>
+                        <td mat-cell *matCellDef="let element">
+                            <div class="table_buttons">
+                                <mat-icon class="project_buttons" (click)="deleteRelation(element)"
+                                    style=" color: red; cursor: pointer;" aria-hidden="true">delete
+                                </mat-icon>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <div class="table-header">
+                        <tr mat-header-row style="background-color: #dedede;height: 100px;  "
+                            *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    </div>
+                    <div class="table-content">
+                        <tr mat-row style="max-height: 75px; cursor: pointer;" title="Click to open article"
+                            *matRowDef="let row; columns: displayedColumns;" class="table-row">
+                        </tr>
+                    </div>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

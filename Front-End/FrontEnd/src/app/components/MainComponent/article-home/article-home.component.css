@@ -1,0 +1,145 @@
+.mainContent{
+    overflow: hidden;
+    width: auto;
+    height: 100%;
+}
+.column1{
+float: left;
+width: 45%;
+height: 100%;
+}
+.column2{
+float: right;
+width: 45%;
+height: 95%;
+}
+.row1{
+height: 10%;
+width: 100%;
+margin-top: 2%;
+justify-content: space-between;
+}
+.row2{
+height: 80%;
+margin-bottom: 5%;
+width: 100%;
+}
+.row2-main-content{
+    margin-top: 2%;
+    margin-bottom: 5%;
+    margin-right: 5%;
+    margin-left: 5%;
+    border:1px black solid;
+    border-radius: 25px;
+    height: 90%;
+    width: auto;
+}
+.button-comment{
+    padding: 10px;
+    background-color: darkslategray;
+    color: white;
+    border: none;
+    border-radius: 20px;
+}
+
+
+/**TABS**/
+
+.tabs-design{
+    margin-top: 2%;
+    height: 100%;
+    text-align: right;
+    margin-right: 7%;
+  }
+  .tabs-buttons{
+    padding: 15px;
+    border: none;
+    font-size: 15px;
+    background-color: whitesmoke;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin-left: 5px;
+    cursor: pointer;
+    box-shadow: 1px black;
+  }
+  .tabs-buttons:hover{
+    border-bottom: 1px solid darkslategray !important;
+  }
+
+  .tabs-buttons:focus{
+    outline: none;
+    border-bottom: 2px solid darkslategray !important;
+  }
+  .tabs-buttons:checked{
+    border-bottom: 2px solid darkslategray !important;
+  }
+
+  .column1-row1{
+    height: 50%;
+  }
+  .column1-row2{
+    height: 50%;
+    width: 100%;
+  }
+
+  .column2-row1{
+      height: 100%;
+      width: 100%;
+  }
+
+
+  /**TABLE**/
+.table-container{
+    border-radius: 25px;  
+        height:100%;
+        width: 100%;
+        overflow: auto;
+}
+  
+.mat-cell {
+  padding: 8px 8px 8px 0;
+}
+td.mat-cell{
+  border-bottom-style: none;
+ }
+ .mat-header-cell{
+  font-size: 15px;
+  height: 50px;
+  color: black;
+  font-family:  'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.mat-table{
+  width: 100%;
+  overflow: auto;
+  transition: none !important;
+  box-shadow: none !important;
+}
+
+.mat-row:nth-child(even) {
+background-color: #f7f7f7;
+} 
+
+.mat-row:hover{
+  background-color: #ebebeb;
+}
+ .mat-cell:nth-child(1) {
+  width: 40%;
+ }
+ .mat-cell:nth-child(2){
+  width: 40%;
+ }
+ .mat-cell:nth-child(3){
+     width: 20%;
+     text-align: right;
+ }
+ 
+ ::-webkit-scrollbar {
+  width: 10px;
+} 
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 15px;
+}
