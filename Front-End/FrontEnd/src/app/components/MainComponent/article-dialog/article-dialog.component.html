@@ -11,7 +11,7 @@
 <div id="formFieldOptions" hidden>
   <tr id="year">
     <th>
-      <mat-form-field >
+      <mat-form-field>
         <mat-label>Year</mat-label>
         <input [(ngModel)]="articleToCreate.year" #year matInput>
       </mat-form-field>
@@ -242,5 +242,42 @@
   <div mat-dialog-actions class='mat-dialog-actions'>
     <button mat-button class='cancel_button' (click)="onNoClick()">Cancel</button>
     <button mat-button class='create_button' (click)="editArticle()" cdkFocusInitial>Edit Article</button>
+  </div>
+</div>
+
+<div class="container" *ngIf="deleteRelation">
+  <h1 mat-dialog-title
+    style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
+    Are you sure you want to remove this relation? </h1>
+  <div mat-dialog-actions class='mat-dialog-actions'>
+    <button mat-button class='cancel_button' (click)="onNoClick()">No</button>
+    <button mat-button class='create_button' (click)="deleteRelationFromArticle()" cdkFocusInitial>Yes</button>
+  </div>
+</div>
+
+<div class="container" *ngIf="createComment">
+  <div mat-dialog-title>
+    <h1
+      style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
+      New Comment </h1>
+  </div>
+  <div id="mat-content" mat-dialog-content>
+    <mat-form-field style="width: 100%;">
+      <textarea matInput [(ngModel)]="commentary" style="width: 100%;"></textarea>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions class='mat-dialog-actions'>
+    <button mat-button class='cancel_button' (click)="onNoClick()">Cancel</button>
+    <button mat-button class='create_button' (click)="createNewComment()" cdkFocusInitial>Create</button>
+  </div>
+</div>
+
+<div class="container" *ngIf="deleteCommentary">
+  <h1 mat-dialog-title
+    style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
+    Are you sure you want to delete this comment? </h1>
+  <div mat-dialog-actions class='mat-dialog-actions'>
+    <button mat-button class='cancel_button' (click)="onNoClick()">No</button>
+    <button mat-button class='create_button' (click)="deleteComment()" cdkFocusInitial>Yes</button>
   </div>
 </div>

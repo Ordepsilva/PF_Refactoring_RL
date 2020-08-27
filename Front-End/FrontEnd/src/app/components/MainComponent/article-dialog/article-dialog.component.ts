@@ -4,6 +4,7 @@ import { dataService } from 'src/app/services/dataService';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogComponent } from '../project-dialog/dialog.component';
 import * as config from 'src/app/configuration/configuration.json';
+import Cookies from 'js-cookie';
 export interface Option {
   value: string;
   viewValue: string;
@@ -17,16 +18,23 @@ export interface Option {
 export class ArticleDialogComponent implements OnInit {
   @Input() articleToCreate: any = {};
   @Input() articleToEdit: any = {};
+  @Input() commentary: any;
 
   selectedOption: string;
+  //layout type
   edit = false;
   create = false;
   delete = false;
+  deleteRelation = false;
+  deleteCommentary = false;
+  createComment = false;
+  //data
   project_id: string;
   articleToDelete: any = {};
   articlesReceived: any = [];
   articleEdited: any = {};
   options: Option[] = config.createArticleMenu;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogComponent>, public articleService: ArticleService, public data_service: dataService, public dialog: MatDialog) {
     this.articlesReceived = this.data_service.articles;
     this.articleToDelete = data;
@@ -41,6 +49,12 @@ export class ArticleDialogComponent implements OnInit {
       this.create = true;
     } else if (this.data_service.optionString == "delete") {
       this.delete = true;
+    } else if (this.data_service.optionString == "deleteRelation") {
+      this.deleteRelation = true;
+    } else if (this.data_service.optionString == "createComment") {
+      this.createComment = true;
+    } else if (this.data_service.optionString == "deleteCommentary") {
+      this.deleteCommentary = true;
     }
   }
 
@@ -131,5 +145,49 @@ export class ArticleDialogComponent implements OnInit {
         alert(err.error);
       }
     );
+  }
+
+  deleteRelationFromArticle(): void {
+    const articleID = Cookies.get('articleID');
+    let body: any = {};
+    body.articleID = this.data.articleID;
+    body.relationName = this.data.relationName;
+
+    try {
+      this.articleService.removeRelationBetweenArticles(articleID, body).subscribe(result => {
+        if (result)
+          this.dialogRef.close({ result: result.success });
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  createNewComment(): void {
+    let body: any = {};
+    body.commentary = this.commentary;
+    try {
+      this.articleService.addCommentToArticleByID(this.data.articleID, body).subscribe(result => {
+        if (result) {
+          this.dialogRef.close({ comment: result.comment });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  }
+
+  deleteComment(): void {
+    try {
+      this.articleService.deleteComment(this.data.commentID).subscribe(result => {
+        if (result) {
+          this.dialogRef.close({ result: result });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
   }
 }
