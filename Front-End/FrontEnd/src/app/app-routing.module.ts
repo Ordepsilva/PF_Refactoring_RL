@@ -6,6 +6,7 @@ import { AuthGuardService } from './services/AuthGuard.service';
 import { SideNavComponent } from './components/MainComponent/side-nav/side-nav.component';
 import { ProjectsComponent } from './components/MainComponent/projects/projects.component';
 import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
+import { ArticleHomeComponent } from './components/MainComponent/article-home/article-home.component';
 
 
 const routes: Routes = [
@@ -16,8 +17,9 @@ const routes: Routes = [
     path: '', component: SideNavComponent,
     children: [
       { path: 'home', component: ProjectsComponent },
-      { path: 'projectHome', component: ProjectHomeComponent }],
-      canActivate: [AuthGuardService]
+      { path: 'projectHome', component: ProjectHomeComponent },
+      { path: 'articleHome', component: ArticleHomeComponent }],
+    canActivate: [AuthGuardService]
   }
 ];
 
