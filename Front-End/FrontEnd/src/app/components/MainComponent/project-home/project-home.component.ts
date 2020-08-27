@@ -52,6 +52,7 @@ export class ProjectHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    Cookies.remove('articleID');
     this.project_name = Cookies.get('project_name');
     this.project_id = Cookies.get('project_id');
     this.firstTab = true;
@@ -88,7 +89,7 @@ export class ProjectHomeComponent implements OnInit {
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
+  masterToggle():void {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
@@ -111,7 +112,7 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  loadNeoVizualization() {
+  loadNeoVizualization(): void {
     let neoVizConfig;
     this.isloaded = false;
     try {
@@ -138,21 +139,23 @@ export class ProjectHomeComponent implements OnInit {
     }
   }
 
-  setTab1() {
+  setTab1(): void {
     this.firstTab = true;
     this.secondTab = false;
     this.thirdTab = false;
     this.isloaded = true;
     document.getElementById("paginator").style.display = "block";
   }
-  setTab2() {
+
+  setTab2(): void {
     this.firstTab = false;
     this.secondTab = true;
     this.thirdTab = false;
     this.loadTablesToRelateArticles();
     document.getElementById("paginator").style.display = "none";
   }
-  setTab3() {
+
+  setTab3(): void {
     this.loadNeoVizualization();
     this.firstTab = false;
     this.secondTab = false;
@@ -160,9 +163,8 @@ export class ProjectHomeComponent implements OnInit {
     document.getElementById("paginator").style.display = "none";
   }
 
-  deleteArticle(element: any) {
+  deleteArticle(element: any): void {
     this.data_service.optionString = "delete";
-    console.log(element.title);
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       width: "400px", data: {
         articleID: element.articleID,
@@ -182,7 +184,7 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  editArticle(element: any) {
+  editArticle(element: any): void {
     console.log(element);
     this.data_service.optionString = "edit";
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
@@ -211,11 +213,12 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  openProject(row: any) {
-    this.router.navigate(["/projectHome"]);
+  openArticle(row: any): void {
+    Cookies.set('articleID', row.articleID);
+    this.router.navigate(["/articleHome"]);
   }
 
-  createArticle() {
+  createArticle(): void {
     this.data_service.optionString = "create";
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       width: "500px", data: {
@@ -244,14 +247,14 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  loadTablesToRelateArticles() {
+  loadTablesToRelateArticles():void {
     this.relations = [];
     this.articleSource = new MatTableDataSource(this.articles);
     try {
       this.articleService.getRelationsForProjectID(this.project_id).subscribe(result => {
         if (result) {
           for (let i = 0; i < result.length; i++) {
-            this.relations.push({ value: result[i], viewValue: result[i]})
+            this.relations.push({ value: result[i], viewValue: result[i] })
           }
         }
       })
@@ -260,12 +263,12 @@ export class ProjectHomeComponent implements OnInit {
     }
   }
 
-  newRelationName() {
+  newRelationName(): void {
     document.getElementById("inputRelation").style.display = "block";
     document.getElementById('dropdownRelationName').style.display = "none";
   }
 
-  closeRelationInput(inputName: string) {
+  closeRelationInput(inputName: string): void {
     if (inputName == undefined) {
       alert("You need to write the relation name");
     } else {
@@ -278,7 +281,7 @@ export class ProjectHomeComponent implements OnInit {
     document.getElementById('dropdownRelationName').style.display = "block";
   }
 
-  relateArticles() {
+  relateArticles(): void {
     let articlesIDToRelate: any = [{}];
     let articleID: any;
     let body: any = {};

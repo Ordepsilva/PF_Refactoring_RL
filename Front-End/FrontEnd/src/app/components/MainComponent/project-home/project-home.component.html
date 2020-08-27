@@ -44,21 +44,21 @@
 
                 <ng-container matColumnDef="title">
                     <th mat-header-cell *matHeaderCellDef style="text-align: center;"> Title</th>
-                    <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="openProject(element)">
+                    <td mat-cell style="text-align: left; " *matCellDef="let element" (click)="openArticle(element)">
                         {{element.title}} </td>
                 </ng-container>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="year">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Year </th>
-                    <td mat-cell style="text-align: center;" *matCellDef="let element" (click)="openProject(element)">
+                    <td mat-cell style="text-align: center;" *matCellDef="let element" (click)="openArticle(element)">
                         {{element.year}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="createdAt">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Created At </th>
-                    <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="openProject(element)">
+                    <td mat-cell style="text-align: center; " *matCellDef="let element" (click)="openArticle(element)">
                         {{element.createdAt}} </td>
                 </ng-container>
 
