@@ -30,7 +30,7 @@ export class ArticleService {
   }
 
   addCommentToArticleByID(articleID: any, commentary: string) {
-    return this.http.post<any>(endpoint + " addCommentToArticleByID/" + articleID, commentary);
+    return this.http.post<any>(endpoint + "addCommentToArticleByID/" + articleID, commentary);
   }
 
   relateOneToMany(articleID: any, body: any) {
@@ -63,8 +63,24 @@ export class ArticleService {
       .put<any>(endpoint + "editArticle/" + articleID, article);
   }
 
-  getRelationsForProjectID(project_id:any){
+  getRelationsForProjectID(project_id: any) {
     return this.http.get<any>(endpoint + "getRelationsForProjectID/" + project_id);
+  }
+
+  getArticlesRelatedToArticleID(articleID: any) {
+    return this.http.get<any>(endpoint + "getArticlesRelatedToArticleID/" + articleID);
+  }
+
+  removeRelationBetweenArticles(articleID: any, body: any) {
+    return this.http.post<any>(endpoint + "removeRelationBetweenArticles/" + articleID, body);
+  }
+
+  deleteComment(commentID: any) {
+    return this.http.delete<any>(endpoint + "deleteComment/" + commentID);
+  }
+
+  getConfigForArticleID(articleID: any, body: any) {
+    return this.http.post<any>(endpoint + "getConfigForArticleID/" + articleID, body);
   }
 }
 
