@@ -106,8 +106,8 @@ articleController.getArticleInfoByID = async (req, res) => {
         instance.readCypher(query).then(result => {
             let article = {};
             article = result.records[0]._fields[0].properties;
-            article.createdAt = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
-            article.year = result.records[i]._fields[0].properties.year.year.low;
+            article.createdAt = result.records[0]._fields[0].properties.createdAt.year + "/" + result.records[0]._fields[0].properties.createdAt.month + "/" + result.records[0]._fields[0].properties.createdAt.day;
+            article.year = result.records[0]._fields[0].properties.year.year.low;
             article.articleID = result.records[0]._fields[0].identity.low;
             return res.status(200).json(article);
         })
@@ -255,11 +255,28 @@ articleController.getCommentsFromArticleID = async (req, res) => {
                     let comment = {};
                     comment = result.records[i]._fields[0].properties;
                     comment.commentID = result.records[i]._fields[0].identity.low;
+                    comment.createdAt = result.records[i]._fields[0].properties.createdAt.day.low + "/" + result.records[i]._fields[0].properties.createdAt.month.low + "/" + result.records[i]._fields[0].properties.createdAt.year.low;
                     comments.push(comment);
                 }
                 return res.status(200).json(comments);
             }
         })
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
+}
+
+articleController.deleteCommentFromArticleID = async (req, res) => {
+    const commentID = req.params.commentID;
+    try {
+        comment = await Comment.findById(commentID);
+        if (comment) {
+            await comment.delete();
+            return res.status(200).json({ result: "Comment was deleted!" });
+        } else {
+            return res.status(400).send("Problem occurred while deleting");
+        }
     } catch (err) {
         console.log(err);
         return res.json(err);
@@ -313,7 +330,7 @@ articleController.removeRelationBetweenArticles = async (req, res) => {
     articleID = req.params.articleID;
     targetArticle = req.body.articleID;
     relationToRemove = req.body.relationName;
-    queryRemoveRelation = "MATCH (a:Article)-[r:" + "relationName" + "]-(b:Article) WHERE ID(a)=" + articleID + " and ID(b)=" + targetArticle + " DELETE r";
+    queryRemoveRelation = "MATCH (a:Article)-[r:" + relationToRemove + "]-(b:Article) WHERE ID(a)=" + articleID + " and ID(b)=" + targetArticle + " DELETE r";
     try {
         instance.writeCypher(queryRemoveRelation);
         return res.status(200).json({ success: "Relation removed." });
@@ -330,14 +347,13 @@ articleController.getArticlesRelatedToArticleID = async (req, res) => {
         instance.readCypher(queryToGetArticles).then(result => {
             if (result) {
                 let articles = [];
-                for(let i=0; i<result.records.length ; i++){
+                for (let i = 0; i < result.records.length; i++) {
                     let articleRelated = {};
                     articleRelated.article = result.records[i]._fields[0].properties;
                     articleRelated.article.articleID = result.records[i]._fields[0].identity.low;
                     articleRelated.relationName = result.records[i]._fields[1];
                     articles.push(articleRelated);
                 }
-                console.log(result);
                 return res.status(200).json(articles);
             }
         })
@@ -345,6 +361,30 @@ articleController.getArticlesRelatedToArticleID = async (req, res) => {
         console.log(err);
         return res.json(err);
     }
+}
+
+articleController.getConfigForArticleID = async (req, res) => {
+    const articleID = req.params.articleID;
+    const query = "Match (a:Article)-[x]-(b:Article) where ID(a)=" + articleID + "  RETURN a,x,b"
+    const config = {
+        container_id: "viz",
+        server_url: req.body.server_url,
+        server_user: req.body.user,
+        server_password: req.body.password,
+        labels: {
+            "Article": {
+                "caption": "title",
+            },
+        },
+        relationships: {
+
+        },
+        arrows: true,
+        thickness: "count",
+        initial_cypher: query
+    };
+    return res.status(200).json(config);
+    console.log(config);
 }
 
 async function verifyIfRelationExists(project_id, relationName) {
