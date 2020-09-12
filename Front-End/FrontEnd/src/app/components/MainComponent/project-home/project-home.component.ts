@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import * as NeoVis from 'src/app/components/MainComponent/project-home/neovis';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Cookies from 'js-cookie';
 import { ArticleService } from 'src/app/services/article/article.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -13,6 +13,7 @@ import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import { ArticleDialogComponent } from '../article-dialog/article-dialog.component';
 import * as config from 'src/app/configuration/configuration.json';
 import { SelectionModel } from '@angular/cdk/collections';
+import { ProjectsService } from 'src/app/services/project/projects.service';
 export interface Option {
   value: string;
   viewValue: string;
@@ -47,26 +48,36 @@ export class ProjectHomeComponent implements OnInit {
 
   pageSizeOptions: any = config.pageOptions;
 
-  constructor(public router: Router, public articleService: ArticleService, private data_service: dataService, public dialog: MatDialog) {
-
+  constructor(public router: Router, public projectService: ProjectsService, public articleService: ArticleService, private data_service: dataService, public dialog: MatDialog, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    Cookies.remove('articleID');
-    this.project_name = Cookies.get('project_name');
-    this.project_id = Cookies.get('project_id');
-    this.firstTab = true;
+    this.project_id = this.route.snapshot.paramMap.get('project_id');
+    console.log(this.project_id);
     this.isloaded = false;
+    if (this.project_id) {
+      this.getProjectInfoById(this.project_id);
+      this.getMyArticles(this.project_id);
+      this.firstTab = true;
+    } else {
+      this.router.navigate(['/home']);
+    }
+  }
 
-    this.articleService.getArticlesFromProjectID(Cookies.get('project_id')).subscribe(
-      (result: any) => {
+  getMyArticles(project_id: number) {
+    this.articleService.getArticlesFromProjectID(project_id).subscribe(
+      (result) => {
+        console.log(result);
         this.articles = result;
         this.dataSource = new MatTableDataSource(this.articles);
         this.data_service.articles = this.articles;
         this.dataSource.paginator = this.paginator;
         this.isloaded = true;
+        console.log(this.articles.length == 0);
         if (this.articles.length == 0) {
           document.getElementById("vizualize").setAttribute("disabled", "disabled");
+        } else {
+          document.getElementById("vizualize").removeAttribute("disabled");
         }
       },
       (err: HttpErrorResponse) => {
@@ -76,6 +87,20 @@ export class ProjectHomeComponent implements OnInit {
     );
   }
 
+  getProjectInfoById(project_id: any) {
+    this.projectService.getProjectInfo(project_id).subscribe(result => {
+      this.project_name = result.project_name;
+      console.log(result);
+    }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error,
+          type: "failed"
+        }
+      });
+    }))
+  }
+  
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -89,7 +114,7 @@ export class ProjectHomeComponent implements OnInit {
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle():void {
+  masterToggle(): void {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
@@ -171,8 +196,7 @@ export class ProjectHomeComponent implements OnInit {
         title: element.title,
       }
     }).afterClosed().subscribe(result => {
-      this.dataSource = new MatTableDataSource(this.data_service.articles);
-      this.dataSource.paginator = this.paginator;
+      this.getMyArticles(this.project_id);
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
@@ -214,8 +238,7 @@ export class ProjectHomeComponent implements OnInit {
   }
 
   openArticle(row: any): void {
-    Cookies.set('articleID', row.articleID);
-    this.router.navigate(["/articleHome"]);
+    this.router.navigate(["/articleHome/" + row.articleID , this.project_id]);
   }
 
   createArticle(): void {
@@ -226,8 +249,7 @@ export class ProjectHomeComponent implements OnInit {
 
       }
     }).afterClosed().subscribe(result => {
-      this.dataSource = new MatTableDataSource(this.data_service.articles);
-      this.dataSource.paginator = this.paginator;
+      this.getMyArticles(this.project_id);
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
@@ -247,7 +269,7 @@ export class ProjectHomeComponent implements OnInit {
     });
   }
 
-  loadTablesToRelateArticles():void {
+  loadTablesToRelateArticles(): void {
     this.relations = [];
     this.articleSource = new MatTableDataSource(this.articles);
     try {

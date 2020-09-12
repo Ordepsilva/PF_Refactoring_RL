@@ -3,6 +3,8 @@ import { User } from 'src/app/models/User';
 import { Router } from '@angular/router';
 import { AuthenticationServiceService } from 'src/app/services/authentication/authentication-service.service';
 import { ValidationService } from 'src/app/services/validation.service';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoDialogComponent } from '../../MainComponent/info-dialog/info-dialog.component';
 @Component({
   selector: 'app-registo',
   templateUrl: './registo.component.html',
@@ -13,16 +15,11 @@ import { ValidationService } from 'src/app/services/validation.service';
 
 export class RegistoComponent implements OnInit {
   @Input() user: User = new User(); pass;
-  constructor(public validation_service: ValidationService, public useR_service: AuthenticationServiceService, private router: Router) { }
+  constructor(public validation_service: ValidationService, public useR_service: AuthenticationServiceService, private router: Router, public dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
 
-  /**
-   * Função responsável por verificar :
-   * - se os campos estão preenchidos;
-   * - se as passwords coincidem;
-   */
   register(): void {
     if (this.user.username === "") {
       alert("Please insert username.");
@@ -35,7 +32,6 @@ export class RegistoComponent implements OnInit {
     }
   }
 
-  //Verifica se as passwords coincidem
   validatepw(): boolean {
     if (this.validation_service.validatePassword(this.user.password, this.pass)) {
       return true;
@@ -43,28 +39,23 @@ export class RegistoComponent implements OnInit {
     return false;
   }
 
-  /**
-   * Função responsável por efetuar o pedido a REST API para registar o utilizador
-   */
   registerService(): void {
     this.useR_service
       .register(this.user)
       .subscribe(
         result => {
-          console.log(result);
           this.router.navigate(["/home"]);
         },
         err => {
-          console.log(err.error);
-          alert(
-            err.error
-
-          );
+          const dialogRef = this.dialog.open(InfoDialogComponent, {
+            width: "400px", data: {
+              message: err.error,
+              type: "failed"
+            }
+          });
         }
       );
   }
-
-
 }
 
 

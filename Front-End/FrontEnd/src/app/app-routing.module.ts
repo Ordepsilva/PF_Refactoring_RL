@@ -17,8 +17,8 @@ const routes: Routes = [
     path: '', component: SideNavComponent,
     children: [
       { path: 'home', component: ProjectsComponent },
-      { path: 'projectHome', component: ProjectHomeComponent },
-      { path: 'articleHome', component: ArticleHomeComponent }],
+      { path: 'projectHome/:project_id', component: ProjectHomeComponent },
+      { path: 'articleHome/:articleID/:project_id', component: ArticleHomeComponent }],
     canActivate: [AuthGuardService]
   }
 ];

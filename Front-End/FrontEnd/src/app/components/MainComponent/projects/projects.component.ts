@@ -8,7 +8,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../project-dialog/dialog.component';
 import { dataService } from 'src/app/services/dataService';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
-import Cookies from 'js-cookie';
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
@@ -26,9 +25,11 @@ export class ProjectsComponent implements OnInit {
   constructor(public project_service: ProjectsService, private router: Router, public dialog: MatDialog, private data_service: dataService) { }
 
   ngOnInit(): void {
-    Cookies.remove('project_id');
-    Cookies.remove('project_name');
     this.isloaded = false;
+    this.getProjectsForUser();
+  }
+
+  getProjectsForUser():void{
     this.project_service.getProjectsForUser().subscribe(
       (result: any) => {
         this.data_service.projects = result;
@@ -44,24 +45,17 @@ export class ProjectsComponent implements OnInit {
     );
   }
 
-  /**
-   * Aplica o filtro da search bar sobre a tabela
-   */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  /**
-   * Função responsável por abrir o popup de criar projeto e actualizar a tabela
-   */
   createproj(): void {
     this.data_service.optionString = "create";
     const dialogRef = this.dialog.open(DialogComponent, {
       width: "400px"
     }).afterClosed().subscribe(result => {
-      this.dataSource = new MatTableDataSource(this.data_service.projects);
-      this.dataSource.paginator = this.paginator;
+     this.getProjectsForUser();
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
@@ -70,21 +64,9 @@ export class ProjectsComponent implements OnInit {
           }
         });
       }
-      if (result.error) {
-        const dialogRef = this.dialog.open(InfoDialogComponent, {
-          width: "400px", data: {
-            message: result.error,
-            type: "failed"
-          }
-        });
-      }
     });
   }
 
-  /**
-   * Função responsável por abrir o popup de editar o projeto e actualizar a tabela
-   * @param projectToEdit projeto que vai ser editado
-   */
   editproj(projectToEdit: any): void {
     this.data_service.optionString = "edit";
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -96,10 +78,8 @@ export class ProjectsComponent implements OnInit {
         date: projectToEdit.date
       }
     }).afterClosed().subscribe(result => {
-
       this.dataSource = new MatTableDataSource(this.data_service.projects);
       this.dataSource.paginator = this.paginator;
-
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
@@ -108,8 +88,7 @@ export class ProjectsComponent implements OnInit {
           }
         })
       }
-    })
-      ;
+    });
   }
 
   deleteproject(element: any) {
@@ -137,8 +116,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   openProject(row: any) {
-    Cookies.set('project_id', row.project_id);
-    Cookies.set('project_name', row.project_name);
-    this.router.navigate(["/projectHome"]);
+    this.router.navigate(["/projectHome/" + row.project_id]);
   }
 }

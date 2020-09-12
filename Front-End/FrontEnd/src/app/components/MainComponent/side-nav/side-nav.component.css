@@ -18,11 +18,11 @@ body {
 }
 .align_project_button{
     width: 200px;
-    position: fixed;
-    justify-content: center
-    ;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
     display: inline-flex;
-   /* margin-top: 2.5%;*/
 }
 
  h3{
@@ -37,6 +37,7 @@ body {
     display: flex;
     padding: 0 20px;
     color: white;
+    margin-bottom: 20px;
     cursor: pointer;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
@@ -90,7 +91,11 @@ body {
     width: 200px;
    
   }
-
+.sidenav_bar{
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
 .main {
     margin-left: 210px; /* Same as the width of the sidenav */
     width: auto;
@@ -108,11 +113,20 @@ body {
         .sidebar-footer{
           width: 50%;
          height: 100%;
-         position: unset;
          padding: unset;
+         padding: 25px;
         }
         .sidenav{
           justify-content: space-between;
+        }
+        .div_sidenav_box{
+          display: flex;
+          margin-bottom: 0;
+          align-items: center;
+          justify-content: center;
+        }
+        .align_project_button{
+          height: 100%;
         }
 }
 @media screen and (max-width: 700px) {
@@ -128,6 +142,21 @@ body {
 
     div.main {margin-left: 0;}
 
+    .sidenav_bar{
+      display: flex;
+      align-items: center;
+    }
+    .align_project_button{
+      height: 100%;
+      align-items: center;
+    }
+    .div_sidenav_box{
+      margin-bottom: 0;
+    }
+    
+    .row2-button{
+      width: 50%;
+    }
     .sidebar-footer{
       width: 50%;
      height: 100%;
@@ -138,7 +167,6 @@ body {
       height: 100%;
       width: 50%;
     }
-    .div_sidenav_box{
-      padding: unset;
-    }
+
+
 }

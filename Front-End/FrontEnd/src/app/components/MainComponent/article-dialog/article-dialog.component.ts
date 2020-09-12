@@ -5,6 +5,7 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { DialogComponent } from '../project-dialog/dialog.component';
 import * as config from 'src/app/configuration/configuration.json';
 import Cookies from 'js-cookie';
+import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 export interface Option {
   value: string;
   viewValue: string;
@@ -43,6 +44,10 @@ export class ArticleDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.verifyTypeOfOperation();
+  }
+
+  verifyTypeOfOperation(): void {
     if (this.data_service.optionString == "edit") {
       this.edit = true;
     } else if (this.data_service.optionString == "create") {
@@ -63,23 +68,23 @@ export class ArticleDialogComponent implements OnInit {
   }
 
   deleteArticle(): void {
-    console.log(this.articlesReceived)
-    try {
-      this.articleService.deleteArticle(this.articleToDelete.articleID).subscribe(result => {
-        let updatedArray = [];
-        for (let article of this.articlesReceived) {
-          if (article.articleID !== this.articleToDelete.articleID) {
-            updatedArray.push(article);
-          }
+    this.articleService.deleteArticle(this.articleToDelete.articleID).subscribe(result => {
+      let updatedArray = [];
+      for (let article of this.articlesReceived) {
+        if (article.articleID !== this.articleToDelete.articleID) {
+          updatedArray.push(article);
         }
-        this.data_service.articles = updatedArray;
-        this.dialogRef.close({ result: result });
-      }), err => {
-        console.log(err.error);
-      };
-    } catch (err) {
-      console.log(err);
-    }
+      }
+      this.data_service.articles = updatedArray;
+      this.dialogRef.close({ result: result });
+    }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error,
+          type: "failed"
+        }
+      });
+    }));
   }
 
   createArticle(): void {
@@ -89,10 +94,12 @@ export class ArticleDialogComponent implements OnInit {
         this.dialogRef.close({ result: result });
       }
       , err => {
-        console.log(err.error);
-        alert(
-          err.error.error
-        );
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: err.error,
+            type: "failed"
+          }
+        });
       }
     )
   }
@@ -141,8 +148,12 @@ export class ArticleDialogComponent implements OnInit {
         }
         this.dialogRef.close({ result: result });
       }, err => {
-        console.log(err.error);
-        alert(err.error);
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: err.error,
+            type: "failed"
+          }
+        });
       }
     );
   }
@@ -153,41 +164,44 @@ export class ArticleDialogComponent implements OnInit {
     body.articleID = this.data.articleID;
     body.relationName = this.data.relationName;
 
-    try {
-      this.articleService.removeRelationBetweenArticles(articleID, body).subscribe(result => {
-        if (result)
-          this.dialogRef.close({ result: result.success });
-      })
-    } catch (err) {
-      console.log(err);
-    }
+    this.articleService.removeRelationBetweenArticles(articleID, body).subscribe(result => {
+      this.dialogRef.close({ result: result.success });
+    }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error,
+          type: "failed"
+        }
+      });
+    }))
   }
 
   createNewComment(): void {
     let body: any = {};
     body.commentary = this.commentary;
-    try {
-      this.articleService.addCommentToArticleByID(this.data.articleID, body).subscribe(result => {
-        if (result) {
-          this.dialogRef.close({ comment: result.comment });
+
+    this.articleService.addCommentToArticleByID(this.data.articleID, body).subscribe(result => {
+      this.dialogRef.close({ comment: result.comment });
+    }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error,
+          type: "failed"
         }
       });
-    } catch (err) {
-      console.log(err);
-      alert(err);
-    }
+    }));
   }
 
   deleteComment(): void {
-    try {
-      this.articleService.deleteComment(this.data.commentID).subscribe(result => {
-        if (result) {
-          this.dialogRef.close({ result: result });
+    this.articleService.deleteComment(this.data.commentID).subscribe(result => {
+      this.dialogRef.close({ result: result });
+    }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error,
+          type: "failed"
         }
       });
-    } catch (err) {
-      console.log(err);
-      alert(err);
-    }
+    }));
   }
 }

@@ -128,7 +128,6 @@ projController.getProjectInfoById = async (req, res) => {
             project.subject = result.records[0]._fields[0].properties.subject;
             date = result.records[0]._fields[0].properties.createdAt.day + "/" + result.records[0]._fields[0].properties.createdAt.month + "/" + result.records[0]._fields[0].properties.createdAt.year;
             project.date = date;
-
             return res.send(project);
         });
     } catch (err) {

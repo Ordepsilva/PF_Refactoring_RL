@@ -16,3 +16,15 @@
 .dialog_title{
     margin: unset !important;
 }
+
+.container{
+    color: red; 
+    display: block;
+    border-radius: 4px;
+    box-sizing: border-box;
+    outline: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    justify-content: center;
+}

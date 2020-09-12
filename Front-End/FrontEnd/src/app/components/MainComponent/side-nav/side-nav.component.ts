@@ -10,32 +10,27 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./side-nav.component.css']
 })
 export class SideNavComponent implements OnInit {
-
   user = new User();
   username: string;
   constructor(public authservice: AuthenticationServiceService, private router: Router) { }
 
   ngOnInit(): void {
-      this.authservice.getuserinfo().subscribe(
-        (result: any) => {
-          this.user = result;
-          console.log(result);
-          this.username = this.user.username;
-        },
-        (err: HttpErrorResponse) => {
-          console.log(err);
-        }
-      )
-    
+    this.getUserInfo();
   }
 
-  /**Função responsável por efetuar o logout*/
+  getUserInfo() {
+    this.authservice.getuserinfo().subscribe(
+      (result: any) => {
+        this.user = result;
+        this.username = this.user.username;
+      },
+      (err: HttpErrorResponse) => {
+        console.log(err);
+      }
+    )
+  }
   logout() {
-    try {
-      localStorage.removeItem('token');
-      this.router.navigate(["/login"]);
-    } catch (err) {
-      console.log(err);
-    }
+    localStorage.removeItem('token');
+    this.router.navigate(["/login"]);
   }
 }
