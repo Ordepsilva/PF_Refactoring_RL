@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ProjectsService } from 'src/app/services/project/projects.service';
 import { Project } from 'src/app/models/Project';
 import { dataService } from 'src/app/services/dataService';
+import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 
 @Component({
   selector: 'app-dialog',
@@ -19,11 +20,13 @@ export class DialogComponent implements OnInit {
   @Input() project: Project = new Project();
   @Input() projectEdit: Project = new Project();
 
+  //type of dialog
   edit = false;
   create = false;
   delete = false;
   info = false;
 
+  //type project received
   projectToedit: any = {};
   projectTodelete: any = {};
   projectReceived: any = {};
@@ -68,15 +71,16 @@ export class DialogComponent implements OnInit {
   createProj(): void {
     this.proj_service.createProject(this.project).subscribe(
       result => {
-        console.log(result.projectCreated);
         this.data_service.projects.push(result.projectCreated);
         this.dialogRef.close({ result: result });
       }
       , err => {
-        console.log(err.error);
-        alert(
-          err.error.error
-        );
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: err.error.error,
+            type: "failed"
+          }
+        });
       }
     )
   };
@@ -92,6 +96,7 @@ export class DialogComponent implements OnInit {
 
     this.proj_service.editProject(this.data.project_id, this.projectToedit).subscribe(
       result => {
+        console.log(result);
         for (var i = 0; i < this.data_service.projects.length; i++) {
           if (this.data_service.projects[i].project_id == this.data.project_id) {
             this.projectToedit.date = this.data.date;
@@ -101,31 +106,35 @@ export class DialogComponent implements OnInit {
         }
         this.dialogRef.close({ result: result });
       }, err => {
-        console.log(err.error);
-        alert(err.error);
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: err.error,
+            type: "failed"
+          }
+        });
       }
     );
   }
 
   deleteProj(): void {
-    try {
-      this.proj_service.deleteProject(this.projectTodelete.project_id).subscribe(result => {
-        let updatedArray = [];
-        for (let project of this.data_service.projects) {
-          if (project.project_id !== this.projectTodelete.project_id) {
-            updatedArray.push(project);
-          }
+    this.proj_service.deleteProject(this.projectTodelete.project_id).subscribe(result => {
+      let updatedArray = [];
+      for (let project of this.data_service.projects) {
+        if (project.project_id !== this.projectTodelete.project_id) {
+          updatedArray.push(project);
         }
-        this.data_service.projects = updatedArray;
-        this.dialogRef.close({ result: result });
-      }), err => {
-        console.log(err.error);
-      };
-    } catch (err) {
-      console.log(err);
-    }
+      }
+      this.data_service.projects = updatedArray;
+      this.dialogRef.close({ result: result });
+    }), err => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: err.error,
+          type: "failed"
+        }
+      });
+    };
   }
-
 
   getProjectInfo(): void {
     this.proj_service.getProjectInfo(this.projectReceived.project_id).subscribe(result => {

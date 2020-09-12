@@ -9,6 +9,8 @@ import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import * as config from 'src/app/configuration/configuration.json';
 import * as NeoVis from 'src/app/components/MainComponent/project-home/neovis';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-article-home',
   templateUrl: './article-home.component.html',
@@ -27,27 +29,40 @@ export class ArticleHomeComponent implements OnInit {
   comments = [];
   article: any;
   articleID: any;
+  project_id: any;
   displayedColumns: string[] = ['title', 'relationName', 'buttons'];
 
-  constructor(public articleService: ArticleService, public dataService: dataService, public dialog: MatDialog) { }
+  constructor(public articleService: ArticleService, public route: ActivatedRoute, public dataService: dataService, public dialog: MatDialog, public router: Router) {
+
+  }
 
   ngOnInit(): void {
-    this.articleID = Cookies.get('articleID');
-    try {
-      this.articleService.getArticleInfoByID(this.articleID).subscribe(result => {
-        if (result) {
-          this.article = result;
-        }
-      });
-      this.articleService.getCommentsFromArticleID(this.articleID).subscribe(result => {
-        if (result) {
-          this.comments = result;
-        }
-      });
-    } catch (err) {
-      console.log(err);
+    this.articleID = this.route.snapshot.paramMap.get('articleID');
+    this.project_id = this.route.snapshot.paramMap.get('project_id');
+    if (this.articleID) {
+      this.getArticleInfoById(this.articleID);
+      this.getCommentsFromArticleID(this.articleID);
     }
-    this.tabAbout = true;
+  }
+
+  getArticleInfoById(id: number): void {
+    this.articleService.getArticleInfoByID(this.articleID).subscribe(result => {
+      if (result) {
+        this.article = result;
+        this.tabAbout = true;
+      }
+    }, (error => {
+      console.log(error);
+    }))
+
+  }
+
+  getCommentsFromArticleID(id: number): void {
+    this.articleService.getCommentsFromArticleID(id).subscribe(result => {
+      this.comments = result;
+    }, (error => {
+      console.log(error);
+    }))
   }
 
   setTabAbout(): void {
@@ -112,7 +127,7 @@ export class ArticleHomeComponent implements OnInit {
   }
 
   openArticle(element: any): void {
-
+    this.router.navigate(["/articleHome/" + element.articleID]);
   }
 
   createNewComment(): void {

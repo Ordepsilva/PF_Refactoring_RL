@@ -1,26 +1,29 @@
 <body>
     <div class="sidenav">
-        <div class="align_project_button">
-            <div routerLink="/home" class="div_sidenav_box">
-                <mat-icon class="item_sidenav_box" _ngcontent-obp-c6 style="margin-right: 20px; " aria-hidden="true">
-                    folder</mat-icon>
-                <h3 class="item_sidenav_box">Projects</h3>
+        <div class="sidenav_bar">
+            <div class="align_project_button">
+                <div routerLink="/home" class="div_sidenav_box">
+                    <mat-icon class="item_sidenav_box" _ngcontent-obp-c6 style="margin-right: 20px; "
+                        aria-hidden="true">
+                        folder</mat-icon>
+                    <h3 class="item_sidenav_box">Projects</h3>
+                </div>
             </div>
-        </div>
-        <div mat-button class="sidebar-footer" [matMenuTriggerFor]="aboveMenu">
-            <mat-menu #aboveMenu="matMenu" yPosition="above">
-                <button style="text-align: center;" (click)="logout()" mat-menu-item>Logout<mat-icon _ngcontent-obp-c6
-                        style="margin-right: 10px; color: black;" aria-hidden="true">exit_to_app
-                    </mat-icon></button>
-                <button style="text-align: center;" mat-menu-item>Perfil<mat-icon _ngcontent-obp-c6
-                        style="margin-right: 10px; color: black;" aria-hidden="true">person</mat-icon></button>
-            </mat-menu>
-            <div class="user_footer_box">
-                <mat-icon _ngcontent-obp-c6 style="margin-right: 10px; color: white;" aria-hidden="true">person
-                </mat-icon>
-                <h3 class="user_footer">{{username}} </h3>
-                <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
-                    keyboard_arrow_up</mat-icon>
+            <div mat-button class="sidebar-footer" [matMenuTriggerFor]="aboveMenu">
+                <mat-menu #aboveMenu="matMenu" yPosition="above">
+                    <button style="text-align: center;" (click)="logout()" mat-menu-item>Logout<mat-icon
+                            _ngcontent-obp-c6 style="margin-right: 10px; color: black;" aria-hidden="true">exit_to_app
+                        </mat-icon></button>
+                    <button style="text-align: center;" mat-menu-item>Perfil<mat-icon _ngcontent-obp-c6
+                            style="margin-right: 10px; color: black;" aria-hidden="true">person</mat-icon></button>
+                </mat-menu>
+                <div class="user_footer_box">
+                    <mat-icon _ngcontent-obp-c6 style="margin-right: 10px; color: white;" aria-hidden="true">person
+                    </mat-icon>
+                    <h3 class="user_footer">{{username}} </h3>
+                    <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
+                        keyboard_arrow_up</mat-icon>
+                </div>
             </div>
         </div>
     </div>

@@ -1,13 +1,12 @@
-
-<div class='dialog'  *ngIf="success">
+<div class='dialog' *ngIf="success">
     <h1 mat-dialog-title class="dialog_title"
         style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
         {{data.message}} </h1>
 </div>
 
 
-<div class='container' style="background-color: red; color: white;" *ngIf="failed">
+<div class='container'  *ngIf="failed">
     <h1 mat-dialog-title
-        style=" font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px;">
-       {{data.message}} </h1>
+        style="margin: 0; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px; text-align: center;">
+        {{data.message}} </h1>
 </div>
