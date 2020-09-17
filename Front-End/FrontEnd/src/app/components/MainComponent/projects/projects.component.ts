@@ -2,12 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { ProjectsService } from 'src/app/services/project/projects.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../project-dialog/dialog.component';
 import { dataService } from 'src/app/services/dataService';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
+import { MendeleyApiService } from 'src/app/services/mendeley/mendeley-api.service';
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
@@ -22,14 +23,14 @@ export class ProjectsComponent implements OnInit {
 
   displayedColumns: string[] = ['project_name', 'subject', 'createdAt', 'description', 'buttons'];
 
-  constructor(public project_service: ProjectsService, private router: Router, public dialog: MatDialog, private data_service: dataService) { }
+  constructor(public project_service: ProjectsService,  private router: Router, public dialog: MatDialog, private data_service: dataService) { }
 
   ngOnInit(): void {
     this.isloaded = false;
     this.getProjectsForUser();
   }
 
-  getProjectsForUser():void{
+  getProjectsForUser(): void {
     this.project_service.getProjectsForUser().subscribe(
       (result: any) => {
         this.data_service.projects = result;
@@ -55,7 +56,7 @@ export class ProjectsComponent implements OnInit {
     const dialogRef = this.dialog.open(DialogComponent, {
       width: "400px"
     }).afterClosed().subscribe(result => {
-     this.getProjectsForUser();
+      this.getProjectsForUser();
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
