@@ -42,7 +42,7 @@ articleController.createArticle = async (req, res) => {
     const title = req.body.title;
     const doi = req.body.doi;
     const isbn = req.body.isbn;
-    const queryVerifyIfArticleExists = "MATCH (n:Article) WHERE n.title = '" + title + "' OR n.doi = '" + doi + "' OR n.isbn= '" + isbn + "' RETURN n";
+    const queryVerifyIfArticleExists = "MATCH (p:Project)-[r:OWN]->(n:Article) WHERE id(p)=" + project_id + " and (n.title ='" + title + "' OR n.doi = '" + doi + "' OR n.isbn= '" + isbn + "') RETURN n";
 
     const { error } = articleCreation(req.body);
     if (error) {
@@ -107,7 +107,11 @@ articleController.getArticleInfoByID = async (req, res) => {
             let article = {};
             article = result.records[0]._fields[0].properties;
             article.createdAt = result.records[0]._fields[0].properties.createdAt.year + "/" + result.records[0]._fields[0].properties.createdAt.month + "/" + result.records[0]._fields[0].properties.createdAt.day;
-            article.year = result.records[0]._fields[0].properties.year.year.low;
+            if (result.records[0]._fields[0].properties.year !== undefined) {
+                article.year = result.records[0]._fields[0].properties.year.year.low;
+            } else {
+                article.year = "";
+            }
             article.articleID = result.records[0]._fields[0].identity.low;
             return res.status(200).json(article);
         })
@@ -140,7 +144,9 @@ articleController.getArticlesFromProjectID = async (req, res) => {
                 }
                 return res.status(200).json(articles);
             }
-        })
+        }, (error => {
+            console.log(error);
+        }));
     } catch (err) {
         console.log(err);
         return res.json(err);
@@ -306,7 +312,6 @@ articleController.editArticle = async (req, res) => {
 articleController.getRelationsForProjectID = async (req, res) => {
     const project_id = req.params.project_id;
     const queryToGetRelations = "MATCH (n:Project)-[x:HAS_RELATIONS]->(b:Relations) WHERE ID(n)=" + project_id + " WITH b OPTIONAL MATCH  (b)-[x:OWN]->(z) RETURN z"
-    console.log(queryToGetRelations);
     try {
         instance.readCypher(queryToGetRelations).then(result => {
             if (result) {
@@ -314,7 +319,6 @@ articleController.getRelationsForProjectID = async (req, res) => {
 
                 for (let i = 0; i < result.records.length; i++) {
                     relationName = result.records[i]._fields[0].properties.name;
-                    console.log(relationName);
                     relations.push(relationName);
                 }
                 return res.status(200).json(relations);
@@ -356,7 +360,7 @@ articleController.getArticlesRelatedToArticleID = async (req, res) => {
                 }
                 return res.status(200).json(articles);
             }
-        })
+        });
     } catch (err) {
         console.log(err);
         return res.json(err);

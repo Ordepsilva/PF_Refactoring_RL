@@ -56,27 +56,26 @@ projController.getProjectsForUser = async (req, res) => {
     const username = req.auth.username;
     const queryToGetAllProjects = "MATCH (a)-[:OWN]->(b) WHERE a.username = '" + username + "' RETURN (b)";
 
-    instance.readCypher(queryToGetAllProjects)
-        .then(result => {
-            let projects = [];
+    instance.readCypher(queryToGetAllProjects).then(result => {
+        let projects = [];
 
-            for (let i = 0; i < result.records.length; i++) {
-                let project = {};
-                project.project_name = result.records[i]._fields[0].properties.project_name;
-                project.description = result.records[i]._fields[0].properties.description;
-                project.project_id = result.records[i]._fields[0].identity.low;
-                project.subject = result.records[i]._fields[0].properties.subject;
-                date = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
-                project.date = date;
+        for (let i = 0; i < result.records.length; i++) {
+            let project = {};
+            project.project_name = result.records[i]._fields[0].properties.project_name;
+            project.description = result.records[i]._fields[0].properties.description;
+            project.project_id = result.records[i]._fields[0].identity.low;
+            project.subject = result.records[i]._fields[0].properties.subject;
+            date = result.records[i]._fields[0].properties.createdAt.year + "/" + result.records[i]._fields[0].properties.createdAt.month + "/" + result.records[i]._fields[0].properties.createdAt.day;
+            project.date = date;
 
-                projects[i] = project;
-            }
-            projects.reverse();
-            return res.status(200).send(projects);
-        }), error(err => {
-            console.log(err);
-            return res.status(400).send(err);
-        });
+            projects[i] = project;
+        }
+        projects.reverse();
+        return res.status(200).send(projects);
+    }, (error => {
+        console.log(err);
+        return res.status(400).send(error);
+    }));
 }
 
 projController.editProject = async (req, res) => {
