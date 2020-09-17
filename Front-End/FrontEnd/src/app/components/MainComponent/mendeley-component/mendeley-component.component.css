@@ -1,0 +1,10 @@
+.button_mendeley{
+    padding: 10px;
+    border: none;
+    background-color: darkslategray;
+    color: white;
+   
+}
+.button_mendeley:focus{
+    outline: none;
+}
