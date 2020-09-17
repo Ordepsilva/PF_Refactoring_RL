@@ -2,11 +2,19 @@
     <div class="sidenav">
         <div class="sidenav_bar">
             <div class="align_project_button">
-                <div routerLink="/home" class="div_sidenav_box">
-                    <mat-icon class="item_sidenav_box" _ngcontent-obp-c6 style="margin-right: 20px; "
-                        aria-hidden="true">
-                        folder</mat-icon>
-                    <h3 class="item_sidenav_box">Projects</h3>
+                <div style="align-items: center; height: auto; width: 100%;">
+                    <div routerLink="/mendeley" class="div_sidenav_box">
+                        <img _ngcontent-obp-c6 src="https://static.mendeley.com/weblet-awareness/images/logo.svg"
+                            style="height: 24px; width: 24px; margin-right: 20px;" alt="Mendeley">
+                        <h3 class="item_sidenav_box">Mendeley</h3>
+                    </div>
+
+                    <div routerLink="/home" class="div_sidenav_box">
+                        <mat-icon class="item_sidenav_box" _ngcontent-obp-c6 style="margin-right: 20px; "
+                            aria-hidden="true">
+                            folder</mat-icon>
+                        <h3 class="item_sidenav_box">Projects</h3>
+                    </div>
                 </div>
             </div>
             <div mat-button class="sidebar-footer" [matMenuTriggerFor]="aboveMenu">
