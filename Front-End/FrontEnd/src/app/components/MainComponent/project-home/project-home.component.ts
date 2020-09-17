@@ -100,7 +100,7 @@ export class ProjectHomeComponent implements OnInit {
       });
     }))
   }
-  
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -140,28 +140,24 @@ export class ProjectHomeComponent implements OnInit {
   loadNeoVizualization(): void {
     let neoVizConfig;
     this.isloaded = false;
-    try {
-      this.articleService.getConfigForRunNeoVis(this.project_id, config.neo4j).subscribe((result: any) => {
-        this.isloaded = true;
-        neoVizConfig = result;
-        neoVizConfig.relationships = {
-          [NeoVis.NEOVIS_DEFAULT_CONFIG]: {
-            "thickness": "count"
-          }
-        };
-        let viz = new NeoVis.default(neoVizConfig);
-        viz.render();
-      },
-        (err: HttpErrorResponse) => {
-          console.log(err);
-          alert(err);
-          this.isloaded = false;
-          this.setTab1();
+    this.articleService.getConfigForRunNeoVis(this.project_id, config.neo4j).subscribe((result: any) => {
+      this.isloaded = true;
+      neoVizConfig = result;
+      neoVizConfig.relationships = {
+        [NeoVis.NEOVIS_DEFAULT_CONFIG]: {
+          "thickness": "count"
         }
-      );
-    } catch (err) {
-      console.log(err);
-    }
+      };
+      let viz = new NeoVis.default(neoVizConfig);
+      viz.render();
+    },
+      (err: HttpErrorResponse) => {
+        console.log(err);
+        alert(err);
+        this.isloaded = false;
+        this.setTab1();
+      }
+    );
   }
 
   setTab1(): void {
@@ -238,7 +234,7 @@ export class ProjectHomeComponent implements OnInit {
   }
 
   openArticle(row: any): void {
-    this.router.navigate(["/articleHome/" + row.articleID , this.project_id]);
+    this.router.navigate(["/articleHome/" + row.articleID, this.project_id]);
   }
 
   createArticle(): void {
@@ -317,24 +313,20 @@ export class ProjectHomeComponent implements OnInit {
     body.articleID = articleID;
     body.relationName = this.relationOption;
 
-    try {
-      this.articleService.relateOneToMany(this.project_id, body).subscribe(result => {
-        if (result) {
-          const dialogRef = this.dialog.open(InfoDialogComponent, {
-            width: "400px", data: {
-              message: result.success,
-              type: "success"
-            }
-          });
-          this.selectedArticle = new SelectionModel<any>(false);
-          this.selection = new SelectionModel<any>(true, []);
+    this.articleService.relateOneToMany(this.project_id, body).subscribe(result => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: result.success,
+          type: "success"
         }
-      }
-      );
-    } catch (err) {
-      console.log(err);
-      alert(err);
-    }
+      });
+      this.selectedArticle = new SelectionModel<any>(false);
+      this.selection = new SelectionModel<any>(true, []);
+      this.relationOption = "";
+    }, (error => {
+      console.log(error);
+    })
+    );
   }
 }
 

@@ -96,7 +96,7 @@ export class ArticleDialogComponent implements OnInit {
       , err => {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
-            message: err.error,
+            message: err.error.error,
             type: "failed"
           }
         });

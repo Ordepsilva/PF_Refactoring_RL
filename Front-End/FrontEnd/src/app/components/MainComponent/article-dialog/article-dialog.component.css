@@ -86,3 +86,15 @@ mat-label{
     background-color: darkslategray !important;;
    }
    
+
+   @media screen and (max-width: 500px) {
+    .mat-dialog-actions{
+      justify-content: center;
+    }
+    .create_button{
+      width: auto;
+    }
+    .cancel_button{
+      width: auto;
+    }
+  }

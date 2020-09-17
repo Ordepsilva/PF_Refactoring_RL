@@ -42,6 +42,7 @@ export class ArticleHomeComponent implements OnInit {
     if (this.articleID) {
       this.getArticleInfoById(this.articleID);
       this.getCommentsFromArticleID(this.articleID);
+      this.loadRelatedArticles();
     }
   }
 
@@ -86,16 +87,17 @@ export class ArticleHomeComponent implements OnInit {
   }
 
   loadRelatedArticles(): void {
-    try {
-      this.articleService.getArticlesRelatedToArticleID(this.articleID).subscribe(result => {
-        if (result) {
-          this.relatedArticles = result;
-          this.dataSource = new MatTableDataSource(this.relatedArticles);
-        }
-      })
-    } catch (err) {
-      console.log(err);
-    }
+    this.articleService.getArticlesRelatedToArticleID(this.articleID).subscribe(result => {
+      this.relatedArticles = result;
+      if(this.relatedArticles.length > 0){
+        document.getElementById("tabVisualization").removeAttribute("disabled");
+      }else{
+        document.getElementById("tabVisualization").setAttribute("disabled", "disabled");
+      }
+      this.dataSource = new MatTableDataSource(this.relatedArticles);
+    }, (error => {
+      console.log(error);
+    }));
   }
 
   deleteRelation(element: any): void {
