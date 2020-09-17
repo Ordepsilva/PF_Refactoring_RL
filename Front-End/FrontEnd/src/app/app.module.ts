@@ -38,6 +38,7 @@ import { ArticleDialogComponent } from './components/MainComponent/article-dialo
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ArticleHomeComponent } from './components/MainComponent/article-home/article-home.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { MendeleyComponentComponent } from './components/MainComponent/mendeley-component/mendeley-component.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,6 +51,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
     ProjectHomeComponent,
     ArticleDialogComponent,
     ArticleHomeComponent,
+    MendeleyComponentComponent,
   ],
   imports: [
     BrowserModule,

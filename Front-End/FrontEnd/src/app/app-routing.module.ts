@@ -7,6 +7,7 @@ import { SideNavComponent } from './components/MainComponent/side-nav/side-nav.c
 import { ProjectsComponent } from './components/MainComponent/projects/projects.component';
 import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
 import { ArticleHomeComponent } from './components/MainComponent/article-home/article-home.component';
+import { MendeleyComponentComponent } from './components/MainComponent/mendeley-component/mendeley-component.component';
 
 
 const routes: Routes = [
@@ -18,7 +19,9 @@ const routes: Routes = [
     children: [
       { path: 'home', component: ProjectsComponent },
       { path: 'projectHome/:project_id', component: ProjectHomeComponent },
-      { path: 'articleHome/:articleID/:project_id', component: ArticleHomeComponent }],
+      { path: 'articleHome/:articleID/:project_id', component: ArticleHomeComponent },
+      { path: 'mendeley', component: MendeleyComponentComponent }
+    ],
     canActivate: [AuthGuardService]
   }
 ];
