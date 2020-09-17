@@ -3,7 +3,8 @@ require('dotenv/config');
 const Neode = require('neode');
 const password = process.env.DBPASSWORD;
 const user = process.env.DBUSER;
+const dbURL = process.env.DBURL;
 
-const instance = new Neode('bolt://localhost:7687',user, password);
+const instance = new Neode(dbURL, user, password);
 
 module.exports = instance;

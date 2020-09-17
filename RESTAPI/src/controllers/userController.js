@@ -30,7 +30,7 @@ userController.login = async (req, res) => {
         return res.status(400).send('Invalid Password');
     }
 
-    const token = jwt.sign({ id: id, username: bdusername }, authconfig.secret)
+    const token = jwt.sign({ id: id, username: bdusername }, authconfig.secret);
 
     return res.status(200).cookie('authToken', token, { expires: new Date(Date.now + 10 * 60000), httpOnly: true }).send({ AuthToken: token });
 }
