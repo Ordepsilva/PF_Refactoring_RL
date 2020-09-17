@@ -53,7 +53,6 @@ export class ProjectHomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.project_id = this.route.snapshot.paramMap.get('project_id');
-    console.log(this.project_id);
     this.isloaded = false;
     if (this.project_id) {
       this.getProjectInfoById(this.project_id);
@@ -67,13 +66,11 @@ export class ProjectHomeComponent implements OnInit {
   getMyArticles(project_id: number) {
     this.articleService.getArticlesFromProjectID(project_id).subscribe(
       (result) => {
-        console.log(result);
         this.articles = result;
         this.dataSource = new MatTableDataSource(this.articles);
         this.data_service.articles = this.articles;
         this.dataSource.paginator = this.paginator;
         this.isloaded = true;
-        console.log(this.articles.length == 0);
         if (this.articles.length == 0) {
           document.getElementById("vizualize").setAttribute("disabled", "disabled");
         } else {
@@ -90,7 +87,6 @@ export class ProjectHomeComponent implements OnInit {
   getProjectInfoById(project_id: any) {
     this.projectService.getProjectInfo(project_id).subscribe(result => {
       this.project_name = result.project_name;
-      console.log(result);
     }, (error => {
       const dialogRef = this.dialog.open(InfoDialogComponent, {
         width: "400px", data: {
