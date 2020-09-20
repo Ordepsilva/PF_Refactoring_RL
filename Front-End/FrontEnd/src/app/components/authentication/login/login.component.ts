@@ -10,37 +10,19 @@ import { AuthenticationServiceService } from 'src/app/services/authentication/au
   styleUrls: ['./login.component.css']
 })
 
-
-
-
-
-
 export class LoginComponent implements OnInit {
-
   @Input() user: User = new User();
+  usernameFormControl = new FormControl('', [Validators.required]);
+  matcher = new MyErrorStateMatcher();
+  receivedResult = true;
 
   constructor(public service: AuthenticationServiceService, private router: Router) { }
 
-  usernameFormControl = new FormControl('', [Validators.required]);
-
-  matcher = new MyErrorStateMatcher();
-
-
-  receivedResult = true;
-
   ngOnInit(): void {
-
     if (localStorage.getItem('token')) {
       this.router.navigate(['/home']);
     }
-
   }
-
-
-  /**
-  *  Função  responsável por verificar os campos de entrada, 
-  *  caso estejam corretos continua para a validação.
-  */
 
   login(): void {
     this.receivedResult = false;
@@ -54,9 +36,7 @@ export class LoginComponent implements OnInit {
       this.serviceLogin();
     }
   }
-  /**
-  * Função responsável por validar as credencias do utilizador na REST API
-  */
+
   serviceLogin(): void {
     this.service
       .login(this.user.username, this.user.password)
@@ -78,7 +58,6 @@ export class LoginComponent implements OnInit {
 
 
 }
-
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {

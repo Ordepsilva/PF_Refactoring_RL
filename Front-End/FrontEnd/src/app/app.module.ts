@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/authentication/login/login.component';
-import { RegistoComponent } from './components/authentication/registo/registo.component';
+import { RegisterComponent } from './components/authentication/register/register.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -43,7 +43,7 @@ import { MendeleyComponentComponent } from './components/MainComponent/mendeley-
   declarations: [
     AppComponent,
     LoginComponent,
-    RegistoComponent,
+    RegisterComponent,
     DialogComponent,
     SideNavComponent,
     ProjectsComponent,

@@ -6,14 +6,14 @@ import { ValidationService } from 'src/app/services/validation.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoDialogComponent } from '../../MainComponent/info-dialog/info-dialog.component';
 @Component({
-  selector: 'app-registo',
-  templateUrl: './registo.component.html',
-  styleUrls: ['./registo.component.css']
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
 
 
 
-export class RegistoComponent implements OnInit {
+export class RegisterComponent implements OnInit {
   @Input() user: User = new User(); pass;
   constructor(public validation_service: ValidationService, public useR_service: AuthenticationServiceService, private router: Router, public dialog: MatDialog) { }
 
@@ -22,13 +22,24 @@ export class RegistoComponent implements OnInit {
 
   register(): void {
     if (this.user.username === "") {
-      alert("Please insert username.");
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: "Please insert username",
+          type: "failed"
+        }
+      });
     } else if (this.user.password === "" && this.pass === "") {
-      alert("Please insert password.");
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: "Please insert password",
+          type: "failed"
+        }
+      });
     } else {
-
-      this.validatepw();
-      this.registerService();
+      let validated = this.validatepw();
+      if (validated) {
+        this.registerService();
+      }
     }
   }
 
@@ -44,6 +55,12 @@ export class RegistoComponent implements OnInit {
       .register(this.user)
       .subscribe(
         result => {
+          const dialogRef = this.dialog.open(InfoDialogComponent, {
+            width: "400px", data: {
+              message: "You are now registed!",
+              type: "success"
+            }
+          });
           this.router.navigate(["/home"]);
         },
         err => {
