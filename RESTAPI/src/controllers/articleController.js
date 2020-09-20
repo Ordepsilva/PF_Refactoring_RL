@@ -52,7 +52,8 @@ articleController.createArticle = async (req, res) => {
     const verifyResult = await instance.readCypher(queryVerifyIfArticleExists);
 
     if (verifyResult.records.length > 0) {
-        return res.status(400).json({ error: "Article already exist" });
+        let error = "Article already exist";
+        return res.status(400).json(error);
     } else {
         try {
             const articleCreated = await Article.create(req.body);
@@ -296,7 +297,6 @@ articleController.editArticle = async (req, res) => {
 
     const { error } = editArticleValidation(req.body);
     if (error) {
-        console.log(error.details[0].message);
         return res.status(400).send(error.details[0].message);
     }
 
@@ -305,7 +305,8 @@ articleController.editArticle = async (req, res) => {
         (await findedArticle).update(req.body);
         return res.status(200).json({ success: "Article Updated!" });
     } else {
-        return res.status(400).json({ error: "Error trying to edit article!" });
+        let error="Error trying to edit article!"
+        return res.status(401).json(error);
     }
 }
 
@@ -388,7 +389,6 @@ articleController.getConfigForArticleID = async (req, res) => {
         initial_cypher: query
     };
     return res.status(200).json(config);
-    console.log(config);
 }
 
 async function verifyIfRelationExists(project_id, relationName) {

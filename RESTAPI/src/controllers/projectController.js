@@ -18,7 +18,8 @@ projController.createProject = async (req, res) => {
     const findedProject = await Project.find(project_name);
     console.log(findedProject);
     if (findedProject) {
-        return res.status(400).json({ error: "Project name already exists!" });
+        let error = "Project name already exists!";
+        return res.status(400).json(error);
     } else {
         try {
             const project = await Project.create(req.body);
