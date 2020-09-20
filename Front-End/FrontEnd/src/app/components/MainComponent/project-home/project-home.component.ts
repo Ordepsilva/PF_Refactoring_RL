@@ -218,14 +218,6 @@ export class ProjectHomeComponent implements OnInit {
           }
         });
       }
-      if (result.error) {
-        const dialogRef = this.dialog.open(InfoDialogComponent, {
-          width: "400px", data: {
-            message: result.error,
-            type: "failed"
-          }
-        });
-      }
     });
   }
 
@@ -247,14 +239,6 @@ export class ProjectHomeComponent implements OnInit {
           width: "400px", data: {
             message: "Sucessfully Created",
             type: "success"
-          }
-        });
-      }
-      if (result.error) {
-        const dialogRef = this.dialog.open(InfoDialogComponent, {
-          width: "400px", data: {
-            message: result.error,
-            type: "failed"
           }
         });
       }

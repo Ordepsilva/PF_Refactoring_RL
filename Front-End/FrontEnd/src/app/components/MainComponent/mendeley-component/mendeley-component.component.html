@@ -1,5 +1,4 @@
-<div *ngIf="userProfile"
-    style="height: 20%; margin-right:1%; margin-top: 2%; border-bottom:1px solid black; padding:10px; display: flex;">
+<div *ngIf="userProfile" class="user-profile">
     <div *ngIf="userProfile.photo.original" style="width: auto; display: contents;">
         <img [src]="userProfile.photo.original" style="border-radius: 50%;  height: 100%; width: auto; ">
     </div>
@@ -13,38 +12,42 @@
         <p>{{userProfile.academic_status}}</p>
     </div>
 </div>
-<div style="display: flex;" *ngIf="isAuthenticated">
-    <div style="width: 45%;">
+<div class="main-content" *ngIf="isAuthenticated">
+    <div class="content-articles">
         <h3>Find your article and add it to an existing project!</h3>
-        <button style="align-items: center; display: flex; cursor: pointer;" (click)="getAllDocuments(); openAllDocuments(); selectedArticle = false;"
-            class="button_mendeley">All Documents <span>
+        <button style="align-items: center; display: flex; cursor: pointer;"
+            (click)="getAllDocuments(); openAllDocuments(); selectedArticle = false;" class="button_mendeley">All
+            Documents <span>
                 <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
                     keyboard_arrow_down</mat-icon>
             </span></button>
         <div *ngIf="isAllDocuments">
             <mat-selection-list [(ngModel)]="optionSelected" [multiple]="false" style="margin-left: 10px;">
-                <mat-list-option *ngFor="let document of allDocuments" [value]="document" (click)="selectedArticle = true;">
+                <mat-list-option *ngFor="let document of allDocuments" [value]="document"
+                    (click)="selectedArticle = true;">
                     {{document.title}}
                 </mat-list-option>
             </mat-selection-list>
         </div>
 
         <button style="align-items: center; display: flex; margin-top: 5px; cursor: pointer;"
-            (click)="getMyGroups(); openGroups(); optionSelected=''; selectedArticle = false;" class="button_mendeley">Groups <span>
+            (click)="getMyGroups(); openGroups(); optionSelected=''; selectedArticle = false;"
+            class="button_mendeley">Groups <span>
                 <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
                     keyboard_arrow_down</mat-icon>
             </span></button>
         <div *ngIf="isGroups">
             <div *ngFor="let group of myGroups">
                 <button class="button_mendeley" style="margin-left: 10px; margin-top: 2px; cursor: pointer;"
-                    (click)="getAllDocumentsByGroupID(group.id); groupDocuments = []; selectedArticle = false; ">{{group.name}} <span>
+                    (click)="getAllDocumentsByGroupID(group.id); groupDocuments = []; selectedArticle = false; ">{{group.name}}
+                    <span>
                         <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
                             keyboard_arrow_down</mat-icon>
                     </span></button>
             </div>
 
             <mat-selection-list [(ngModel)]="optionSelected" [multiple]="false">
-                <mat-list-option style="width: 100%; margin-left: 10px;" *ngFor="let doc of groupDocuments"
+                <mat-list-option  class="list-option" style="width: 100%; margin-left: 10px;" *ngFor="let doc of groupDocuments"
                     [value]="doc" (click)="selectedArticle = true;">
                     {{doc.title}}
                 </mat-list-option>
@@ -54,7 +57,7 @@
             <button class="button_mendeley" style="cursor: pointer;" (click)="selectProject()">Select Project</button>
         </div>
     </div>
-    <div style="width: 50%; margin-left: 5%; margin-right: 1%;" *ngIf="isSelectedToAdd">
+    <div class="content-projects" *ngIf="isSelectedToAdd">
         <div style="display: flex;">
             <h3
                 style="background-color: darkslategray; color: white; width: 100%;  padding-top: 10px;padding-bottom: 10px; padding-left: 10px;">
@@ -68,7 +71,8 @@
             </mat-selection-list>
         </div>
         <div style="display: flex; justify-content: flex-end; width:100%; margin-top: 5px;" *ngIf="projectSelected">
-            <button class="button_mendeley" style="cursor: pointer;" (click)="addArticleToProject()">Add to Project</button>
+            <button class="button_mendeley" style="cursor: pointer;" (click)="addArticleToProject()">Add to
+                Project</button>
         </div>
     </div>
 </div>

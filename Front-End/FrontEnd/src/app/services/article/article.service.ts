@@ -11,7 +11,7 @@ const httpOptions = {
     "Content-Type": "application/json"
   })
 };
-const endpoint = "http://localhost:3000/project/articles/";
+const endpoint = "http://localhost:3000/articles/";
 
 @Injectable({
   providedIn: 'root'
