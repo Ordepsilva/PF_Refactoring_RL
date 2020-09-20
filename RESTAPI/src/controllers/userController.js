@@ -17,7 +17,7 @@ userController.login = async (req, res) => {
 
     const findeduser = await User.find(req.body.username);
     if (!findeduser) {
-        return res.status(400).send('Wrong username');
+        return res.status(400).send("Username and password don't match!");
     } else {
         bdusername = findeduser.get('username');
         bdpassword = findeduser.get('password');
@@ -27,7 +27,7 @@ userController.login = async (req, res) => {
     const validPassword = await bcrypt.compare(req.body.password, bdpassword);
 
     if (!validPassword) {
-        return res.status(400).send('Invalid Password');
+        return res.status(401).send('Invalid Password');
     }
 
     const token = jwt.sign({ id: id, username: bdusername }, authconfig.secret);
