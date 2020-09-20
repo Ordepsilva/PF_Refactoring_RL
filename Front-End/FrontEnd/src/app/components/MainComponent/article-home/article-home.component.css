@@ -142,3 +142,65 @@ background-color: #f7f7f7;
   background: black;
   border-radius: 15px;
 }
+.margin-top-div{
+  height: 5%;
+}
+.about-content{
+  width: 100%; height: 100%; display: flex;
+}
+.about-info{
+  width: 100%; height: 100%; margin-left: 10px; overflow-y: auto;
+}
+.middleColumn{
+  width: 10%; height: 100%;
+}
+.tabs-design-buttons{
+  width: 90%;
+}
+
+.tabs-design-space{
+  width: 10%; text-align: left; margin-left: 1%;
+}
+@media screen and (max-width: 800px) {
+  .mainContent{
+    overflow: auto;
+  }
+  .row2{
+    height: 100%;
+    margin-top: 10%;
+  }
+.about-content{
+  display: unset;
+}
+.column1{
+  float: unset;
+  width: 100%;
+}
+.column2{
+  float: unset;
+  width: 100%;
+}
+.about-info{
+  width: auto;
+  margin-left: unset;
+  padding: 10px;
+}
+.middleColumn{
+  width: 100%;
+  height: 3%;
+}
+
+.tabs-design-buttons{
+  width: 100%;
+  display: flex;
+}
+.tabs-design-space{
+  width: 0;
+}
+}
+
+@media screen and (max-width: 1000px) {
+  .margin-top-div{
+    height: unset;
+  }
+}

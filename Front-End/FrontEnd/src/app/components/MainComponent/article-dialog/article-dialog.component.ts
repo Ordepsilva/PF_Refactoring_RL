@@ -96,7 +96,7 @@ export class ArticleDialogComponent implements OnInit {
       , err => {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
-            message: err.error.error,
+            message: err.error,
             type: "failed"
           }
         });
@@ -159,12 +159,11 @@ export class ArticleDialogComponent implements OnInit {
   }
 
   deleteRelationFromArticle(): void {
-    const articleID = Cookies.get('articleID');
     let body: any = {};
-    body.articleID = this.data.articleID;
+    body.articleID = this.data.articleIDTarget;
     body.relationName = this.data.relationName;
 
-    this.articleService.removeRelationBetweenArticles(articleID, body).subscribe(result => {
+    this.articleService.removeRelationBetweenArticles(this.data.articleID, body).subscribe(result => {
       this.dialogRef.close({ result: result.success });
     }, (error => {
       const dialogRef = this.dialog.open(InfoDialogComponent, {

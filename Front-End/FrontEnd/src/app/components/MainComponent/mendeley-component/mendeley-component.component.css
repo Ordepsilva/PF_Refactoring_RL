@@ -8,3 +8,42 @@
 .button_mendeley:focus{
     outline: none;
 }
+
+.main-content{
+    display: flex;
+}
+
+.content-articles{
+    width: 45%;
+}
+
+.content-projects{
+    width: 50%; margin-left: 5%; margin-right: 1%;
+}
+.user-profile{
+    height: 20%; margin-right:1%; margin-top: 2%; border-bottom:1px solid black; padding:10px; display: flex;
+}
+
+.list-option{
+    width: 100%; margin-left: 10px;
+    padding: 10px;
+}
+
+@media screen and (max-width: 700px) {
+  .main-content{
+      display: unset;
+  }
+  .content-articles{
+      padding: 5px;
+      width: 90%;
+      height: auto;
+  }
+  .content-projects{
+      width: 90%;
+      height: auto;
+  }
+  .button_mendeley{
+      margin-right: 5px;
+  }
+  }
+  

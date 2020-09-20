@@ -104,20 +104,13 @@ export class ArticleHomeComponent implements OnInit {
     this.dataService.optionString = "deleteRelation";
     const dialogRef = this.dialog.open(ArticleDialogComponent, {
       width: "400px", data: {
-        articleID: element.article.articleID,
+        articleIDTarget: element.article.articleID,
+        articleID: this.articleID,
         relationName: element.relationName
       }
     }).afterClosed().subscribe(result => {
-      let newArray = [];
-      let j = 0;
       if (result) {
-        for (let i = 0; i < this.relatedArticles.length; i++) {
-          if (this.relatedArticles[i] != element) {
-            newArray[j] = this.relatedArticles[i];
-            j++;
-          }
-        }
-        this.dataSource = new MatTableDataSource(newArray);
+        this.loadRelatedArticles();
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
             message: "Relation was sucessfully removed",

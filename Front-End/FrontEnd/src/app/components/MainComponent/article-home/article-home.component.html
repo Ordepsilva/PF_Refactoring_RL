@@ -1,14 +1,15 @@
 <div class="mainContent">
     <div class="row1">
         <div style="display: flex; align-items: center; width: 10%; justify-content: space-between;">
-            <span class="material-icons" title="Go back" style="cursor: pointer;" [routerLink]="'/projectHome/' + project_id ">
+            <span class="material-icons" title="Go back" style="cursor: pointer;"
+                [routerLink]="'/projectHome/' + project_id ">
                 arrow_back_ios
             </span>
         </div>
         <div class="tabs-design" style="margin-left: 5%;display: flex;">
-            <div style="width: 10%; text-align: left; margin-left: 1%;">
+            <div class="tabs-design-space">
             </div>
-            <div style="width: 90%;">
+            <div class="tabs-design-buttons" >
                 <button style="background-color: none;" class="tabs-buttons" (click)="setTabAbout()">About</button>
                 <button style="background-color: none;" class="tabs-buttons" (click)="setTabRelatedArticles()">Related
                     Articles</button>
@@ -19,10 +20,10 @@
     </div>
     <div class="row2">
         <div class="row2-main-content">
-            <div style="width: 100%; height: 100%; display: flex;" *ngIf="tabAbout">
+            <div class="about-content" *ngIf="tabAbout">
                 <div class="column1">
-                    <div style="width: 100%; height: 100%; margin-left: 10px; overflow-y: auto;">
-                        <div style="height: 5%;"></div>
+                    <div class="about-info">
+                        <div class="margin-top-div"></div>
                         <mat-divider></mat-divider>
                         <mat-accordion>
                             <mat-expansion-panel disabled>
@@ -129,7 +130,7 @@
                     </div>
                     <div></div>
                 </div>
-                <div style="width: 10%; height: 100%;"></div>
+                <div class="middleColumn" ></div>
                 <div class="column2">
                     <div
                         style="width: 100%; height: 10%;display: flex; justify-content: space-between; margin-top: 1%;align-items: center;">
@@ -158,7 +159,7 @@
                     </div>
                 </div>
             </div>
-            <div id="viz" class="viz" *ngIf="tabVisualize" style="width: 100%; height: 100%; outline: none;"></div>
+            <div id="viz" class="viz" *ngIf="tabVisualize" style="width: 100%; height: 100%; outline: none; min-height: 300px;"></div>
             <div class="table-container" *ngIf="tabRelatedArticles">
                 <div *ngIf="!isloaded" class="spinner">
                     <mat-spinner></mat-spinner>
