@@ -19,6 +19,8 @@
     "neode": "^0.4.4",
     "nodemon": "^2.0.4",
     "querystring": "^0.2.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4"
   }
 }
