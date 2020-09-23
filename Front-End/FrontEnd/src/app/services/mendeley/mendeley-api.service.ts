@@ -40,12 +40,12 @@ export class MendeleyApiService {
 
   getMyMendeleyProfile(): Observable<any> {
     let options = this.mendeleyOptions();
-    return this.http.get(MENDELEYAPI + "profiles/me", options);
+    return this.http.get<any>(MENDELEYAPI + "profiles/me", options);
   }
 
   getMyGroups(): Observable<any> {
     let options = this.mendeleyOptions();
-    return this.http.get(MENDELEYAPI + "groups", options);
+    return this.http.get<any>(MENDELEYAPI + "groups", options);
   }
 
   getGroupByID(id: any): Observable<any> {
@@ -84,6 +84,11 @@ export class MendeleyApiService {
 
   addArticleToProjectID(body: any, projectID: any): Observable<any> {
     return this.http.post<any>(APIURL + "addArticleToProjectID/" + projectID, body);
+  }
+
+  getNotesForDocumentID(documentID:any): Observable<any>{
+    let options = this.mendeleyOptions();
+    return this.http.get<any[]>(MENDELEYAPI + "annotations?document_id=" + documentID + "&limit=200", options);
   }
   
   mendeleyOptions(): any {
