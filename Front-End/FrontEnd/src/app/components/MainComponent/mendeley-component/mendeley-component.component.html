@@ -1,78 +1,101 @@
-<div *ngIf="userProfile" class="user-profile">
-    <div *ngIf="userProfile.photo.original" style="width: auto; display: contents;">
-        <img [src]="userProfile.photo.original" style="border-radius: 50%;  height: 100%; width: auto; ">
-    </div>
-    <div *ngIf="!userProfile.photo.original" style="width: auto; display: contents;">
-        <img [src]="userProfile.photo.standard" style="border-radius: 50%;  height: 100%; width: auto; ">
-    </div>
-
-    <div style="padding:10px;">
-        <h2>{{userProfile.display_name}}</h2>
-        <p>{{userProfile.email}}</p>
-        <p>{{userProfile.academic_status}}</p>
-    </div>
-</div>
-<div class="main-content" *ngIf="isAuthenticated">
-    <div class="content-articles">
-        <h3>Find your article and add it to an existing project!</h3>
-        <button style="align-items: center; display: flex; cursor: pointer;"
-            (click)="getAllDocuments(); openAllDocuments(); selectedArticle = false;" class="button_mendeley">All
-            Documents <span>
-                <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
-                    keyboard_arrow_down</mat-icon>
-            </span></button>
-        <div *ngIf="isAllDocuments">
-            <mat-selection-list [(ngModel)]="optionSelected" [multiple]="false" style="margin-left: 10px;">
-                <mat-list-option *ngFor="let document of allDocuments" [value]="document"
-                    (click)="selectedArticle = true;">
-                    {{document.title}}
-                </mat-list-option>
-            </mat-selection-list>
-        </div>
-
-        <button style="align-items: center; display: flex; margin-top: 5px; cursor: pointer;"
-            (click)="getMyGroups(); openGroups(); optionSelected=''; selectedArticle = false;"
-            class="button_mendeley">Groups <span>
-                <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
-                    keyboard_arrow_down</mat-icon>
-            </span></button>
-        <div *ngIf="isGroups">
-            <div *ngFor="let group of myGroups">
-                <button class="button_mendeley" style="margin-left: 10px; margin-top: 2px; cursor: pointer;"
-                    (click)="getAllDocumentsByGroupID(group.id); groupDocuments = []; selectedArticle = false; ">{{group.name}}
-                    <span>
-                        <mat-icon _ngcontent-obp-c6 aria-hidden="true" style="color: white; margin-left: 10px;">
-                            keyboard_arrow_down</mat-icon>
-                    </span></button>
+<div style="width: 100%; height: 100%;" *ngIf="isAuthenticated">
+    <div class="row1">
+        <div class="row1-user-profile">
+            <div *ngIf="userProfile.photo.original" style="width: auto; display: contents;">
+                <img [src]="userProfile.photo.original" style="border-radius: 50%;  height: 80%; width: auto; ">
+            </div>
+            <div *ngIf="!userProfile.photo.original" style="width: auto; display: contents;">
+                <img [src]="userProfile.photo.standard" style="border-radius: 50%;  height: 80%; width: auto; ">
             </div>
 
-            <mat-selection-list [(ngModel)]="optionSelected" [multiple]="false">
-                <mat-list-option  class="list-option" style="width: 100%; margin-left: 10px;" *ngFor="let doc of groupDocuments"
-                    [value]="doc" (click)="selectedArticle = true;">
-                    {{doc.title}}
-                </mat-list-option>
-            </mat-selection-list>
+            <div style="padding:10px;">
+                <h2>{{userProfile.display_name}}</h2>
+                <p>{{userProfile.email}}</p>
+                <p>{{userProfile.academic_status}}</p>
+            </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; width:100%; margin-top: 5px;" *ngIf="selectedArticle">
-            <button class="button_mendeley" style="cursor: pointer;" (click)="selectProject()">Select Project</button>
+        <div style="display: flex; align-items: flex-end; width: 50%; margin-right: 6%; justify-content: flex-end; ">
+            <button class="tabs-buttons" (click)="setDocuments()">All Documents</button>
+            <button class="tabs-buttons" (click)="setGroups()">My Groups</button>
         </div>
     </div>
-    <div class="content-projects" *ngIf="isSelectedToAdd">
-        <div style="display: flex;">
-            <h3
-                style="background-color: darkslategray; color: white; width: 100%;  padding-top: 10px;padding-bottom: 10px; padding-left: 10px;">
-                My Projects</h3>
+    <div style="height: 70%;" class="row2">
+        <div class="column1" *ngIf="itsDocuments">
+            <div class="column1-table-documents">
+                <table mat-table [dataSource]="documentSource" class="mat-elevation-z8" style="width: 100%;">
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef style="width: 10%; padding: 10px;">
+                            <mat-checkbox [checked]="selectedDocument.hasValue() && isAllSelected()"
+                                [indeterminate]="selectedDocument.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row" style="width: 10%; padding: 10px;">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selectedDocument.toggle(row) : null"
+                                [checked]="selectedDocument.isSelected(row)" [aria-label]="checkboxLabel(row)">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="title">
+                        <th mat-header-cell *matHeaderCellDef style="width: 90%; font-size: 15px;"> Document Title </th>
+                        <td mat-cell *matCellDef="let element" style="width: 90%;"> {{element.title}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedArticleColumns" style="position: sticky;">
+                    </tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedArticleColumns;"
+                        (click)="selectedDocument.toggle(row)">
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div>
-            <mat-selection-list [(ngModel)]="projectSelected" [multiple]="false">
-                <mat-list-option style="width: 100%;" *ngFor="let project of myProjects" [value]="project.project_id">
-                    {{project.project_name}}
-                </mat-list-option>
-            </mat-selection-list>
+        <div class="column1" *ngIf="itsGroups">
+            <div class="column1-table-documents">
+                <table mat-table [dataSource]="groupSource" class="mat-elevation-z8" style="width: 100%;">
+                    <ng-container matColumnDef="title">
+                        <th mat-header-cell *matHeaderCellDef style="width: 90%; font-size: 15px;"> Group Name </th>
+                        <td mat-cell *matCellDef="let element" style="width: 90%;"> {{element.name}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedGroups" style="position: sticky;">
+                    </tr>
+                    <tr mat-row style="cursor: pointer;" *matRowDef="let row; columns: displayedGroups;"
+                        (click)="getAllDocumentsByGroupID(row.id)">
+                    </tr>
+                </table>
+            </div>
+            <!--Duas tables-->
         </div>
-        <div style="display: flex; justify-content: flex-end; width:100%; margin-top: 5px;" *ngIf="projectSelected">
-            <button class="button_mendeley" style="cursor: pointer;" (click)="addArticleToProject()">Add to
-                Project</button>
+        <div class="column2">
+            <button class="addToProject" (click)="addArticleToProject()">Add to Project</button>
+        </div>
+        <div class="column3">
+            <div class="column1-table-projects" *ngIf="itsProjects">
+                <table mat-table [dataSource]="projectSource" class="mat-elevation-z8" style="width: 100%;">
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef style="width: 10%; padding: 10px;">
+                            <mat-checkbox [checked]="selectedProject.hasValue() && isAllSelectedProject()"
+                                [indeterminate]="selectedProject.hasValue() && !isAllSelectedProject()"
+                                [aria-label]="checkboxLabelProject()">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row" style="width: 10%; padding: 10px;">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selectedProject.toggle(row) : null"
+                                [checked]="selectedProject.isSelected(row)" [aria-label]="checkboxLabelProject(row)">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="title">
+                        <th mat-header-cell *matHeaderCellDef style="width: 90%; font-size: 15px;"> Project Name </th>
+                        <td mat-cell *matCellDef="let element" style="width: 90%;"> {{element.project_name}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedArticleColumns" style="position: sticky;">
+                    </tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedArticleColumns;"
+                        (click)="selectedProject.toggle(row)">
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>

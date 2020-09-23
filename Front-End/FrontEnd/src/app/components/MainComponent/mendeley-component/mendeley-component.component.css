@@ -47,3 +47,106 @@
   }
   }
   
+
+  /**NEW LAYOUT **/
+
+  .tabs-buttons{
+    padding: 10px;
+    border: none;
+    font-size: 15px;
+    background-color: whitesmoke;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin-left: 5px;
+    cursor: pointer;
+    box-shadow: 1px black;
+  }
+  .tabs-buttons:hover{
+    border-bottom: 1px solid darkslategray !important;
+  }
+
+  .tabs-buttons:focus{
+    outline: none;
+    border-bottom: 2px solid darkslategray !important;
+  }
+  .tabs-buttons:checked{
+    
+    border-bottom: 2px solid darkslategray !important;
+  }
+
+  .row1{
+    height: 20%; display: flex; padding: 10px;
+  }
+  .row1-user-profile{
+    display: flex; margin-left: 5%; width: 50%; align-items: center;
+  }
+  .row2{
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    height: 90%;
+     margin-left: 5%;
+    margin-right: 5%;
+    display: flex;
+  }
+  .column1{
+    width: 45%;
+    height: 100%;
+    align-items: center;
+    display: flex;
+  }
+  .column2{
+    width: 10%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .column3{
+    width: 45%;
+    height: 100%;
+    align-items: center;
+    display: flex;
+  }
+  .column1-table-documents{
+    height: 90%; width: 100%; border: 1px solid black; margin-left: 10px;  margin-top: 10px;  margin-right: 10px;  margin-bottom: 10px; overflow: auto; 
+  }
+  .mat-table{
+    width: 100%;
+    overflow: auto;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+  .mat-row:nth-child(even) {
+    background-color: #f7f7f7;
+    } 
+
+    .mat-row:hover{
+      background-color: #ebebeb;
+    }
+    .mat-header-cell{
+        font-size: 15px;
+        color: black;
+        font-family:  'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      }
+      .mat-cell {
+        padding: 8px 8px 8px 0;
+      }
+      td.mat-cell{
+        border-bottom-style: none;
+       }
+
+     .column1-table-projects{
+        height: 90%; width: 100%; border: 1px solid black; margin-left: 10px;  margin-top: 10px;  margin-right: 10px;  margin-bottom: 10px; overflow: auto; 
+     }
+
+     .addToProject{
+        padding: 10px;
+        background-color: darkslategray;
+        color: white;
+        width: 100%;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        }
+        .addToProject:focus{
+          outline: none;
+        }

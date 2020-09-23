@@ -1,6 +1,10 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+import { element } from 'protractor';
+import { ArticleService } from 'src/app/services/article/article.service';
 import { MendeleyApiService } from 'src/app/services/mendeley/mendeley-api.service';
 import { ProjectsService } from 'src/app/services/project/projects.service';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
@@ -11,25 +15,25 @@ import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
   styleUrls: ['./mendeley-component.component.css']
 })
 export class MendeleyComponentComponent implements OnInit {
+  displayedArticleColumns: string[] = ['select', 'title'];
+  displayedGroups: string[] = ['title'];
+  selectedProject = new SelectionModel<any>(false);
+  selectedDocument = new SelectionModel<any>(false);
   isAuthenticated: boolean = false;
-  isGroups: boolean = false;
-  isAllDocuments: boolean = false;
-  isSelectedToAdd: boolean = false;
-  selectedArticle: boolean = false;
-  optionSelected: any;
-
-
+  itsDocuments: boolean = false;
+  itsGroups: boolean = false;
+  itsProjects: boolean = false;
+  documentSource: any;
+  groupSource: any;
+  projectSource: any;
   userProfile: any;
   myGroups: any = [];
-  articles: any = []
-  folders: any = [];
-  document: any = {};
   allDocuments: any = [];
   groupDocuments: any = [];
   myProjects: any = [];
 
   projectSelected: any;
-  constructor(public apiMendeley: MendeleyApiService, public activatedRoute: ActivatedRoute, public projectService: ProjectsService, public dialog: MatDialog) {
+  constructor(public apiMendeley: MendeleyApiService, public activatedRoute: ActivatedRoute, public projectService: ProjectsService, public dialog: MatDialog, public articleService: ArticleService) {
   }
 
   ngOnInit(): void {
@@ -38,6 +42,8 @@ export class MendeleyComponentComponent implements OnInit {
         this.apiMendeley.token(params.code).subscribe(result => {
           this.isAuthenticated = true;
           this.getMyMendeleyProfile();
+          this.getMyProjects();
+          this.getAllDocuments();
         }, (error => {
           console.log(error);
         }))
@@ -45,6 +51,56 @@ export class MendeleyComponentComponent implements OnInit {
         this.verifyLogin();
       }
     });
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selectedDocument.selected.length;
+    const numRows = this.documentSource.length;
+    return numSelected === numRows;
+  }
+
+  isAllSelectedProject() {
+    const numSelected = this.selectedProject.selected.length;
+    const numRows = this.projectSource.length;
+    return numSelected === numRows;
+  }
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle(): void {
+    this.isAllSelected() ?
+      this.selectedDocument.clear() :
+      this.documentSource.data.forEach(row => this.selectedDocument.select(row));
+  }
+  
+  masterToggleProject(): void {
+    this.isAllSelectedProject() ?
+      this.selectedProject.clear() :
+      this.documentSource.data.forEach(row => this.selectedProject.select(row));
+  }
+  
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectedDocument.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+
+  checkboxLabelProject(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelectedProject() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectedProject.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+
+  setDocuments(): void {
+    this.itsGroups = false;
+    this.getAllDocuments();
+  }
+
+  setGroups(): void {
+    this.getMyGroups();
+    this.itsDocuments = false;
   }
 
   verifyLogin(): void {
@@ -56,6 +112,8 @@ export class MendeleyComponentComponent implements OnInit {
       }))
     } else {
       this.getMyMendeleyProfile();
+      this.getMyProjects();
+      this.getAllDocuments();
       console.log("you are authenticated");
     }
   }
@@ -76,15 +134,20 @@ export class MendeleyComponentComponent implements OnInit {
   getMyGroups(): void {
     this.apiMendeley.getMyGroups().subscribe(result => {
       this.myGroups = result;
+      this.groupSource = new MatTableDataSource(this.myGroups);
+      this.itsGroups = true;
     }, (error => {
       console.log(error);
     }))
   }
 
   getAllDocumentsByGroupID(id: any) {
-    this.optionSelected = null;
     this.apiMendeley.getAllDocumentsByGroupID(id).subscribe(result => {
       this.groupDocuments = result;
+      this.documentSource = new MatTableDataSource(this.groupDocuments);
+      this.itsDocuments = true;
+      this.itsGroups = false;
+      console.log(result);
     }, (error => {
       console.log(error);
     }))
@@ -93,50 +156,72 @@ export class MendeleyComponentComponent implements OnInit {
   getAllDocuments() {
     this.apiMendeley.getAllDocuments().subscribe(result => {
       this.allDocuments = result;
+      this.documentSource = new MatTableDataSource(this.allDocuments);
+      this.itsDocuments = true;
     }, (error => {
       console.log(error);
     }))
   }
 
-  openGroups(): void {
-    this.isGroups = !this.isGroups;
-  }
-
-  openAllDocuments(): void {
-    this.isAllDocuments = !this.isAllDocuments;
-  }
-
-  selectProject() {
-    this.isSelectedToAdd = true;
-    this.selectedArticle = false;
+  getMyProjects(): void {
     this.projectService.getProjectsForUser().subscribe(result => {
       this.myProjects = result;
+      this.projectSource = new MatTableDataSource(this.myProjects);
+      this.itsProjects = true;
     }, (error => {
       console.log(error);
     }))
   }
 
-  addArticleToProject() {
-    this.apiMendeley.addArticleToProjectID(this.optionSelected[0], this.projectSelected).subscribe(result => {
+  addArticleToProject(): void {
+    if (this.selectedDocument.selected[0] && this.selectedProject.selected[0]) {
+      this.apiMendeley.addArticleToProjectID(this.selectedDocument.selected[0], this.selectedProject.selected[0].project_id).subscribe(result => {
+        let articleID = result.article.articleID;
+
+        this.apiMendeley.getNotesForDocumentID(this.selectedDocument.selected[0].id).subscribe(result => {
+          let notes = [];
+         
+          result.forEach(element => {
+            if (element.type == "sticky_note" || element.type == "note") {
+              notes.push(element);
+            }
+          });
+
+          notes.forEach(element => {
+            let body: any = {};
+            body.commentary = element.text;
+            this.articleService.addCommentToArticleByID(articleID, body).subscribe(result => {
+            }, (error => {
+              console.log(error);
+            }))
+          });
+
+          const dialogRef = this.dialog.open(InfoDialogComponent, {
+            width: "400px", data: {
+              message: "Successfully added to the project",
+              type: "success"
+            }
+          }); 
+        }, (error => {
+          console.log(error);
+        }))
+      }, (error => {
+        console.log(error);
+      }))
+    } else if (!this.selectedDocument.selected[0]) {
       const dialogRef = this.dialog.open(InfoDialogComponent, {
         width: "400px", data: {
-          message: result.success,
-          type: "success"
-        }
-      });
-      this.isSelectedToAdd=false;
-      this.selectedArticle = false;
-      this.optionSelected="";
-      this.projectSelected="";
-    }, (error => {
-      console.log(error);
-      const dialogRef = this.dialog.open(InfoDialogComponent, {
-        width: "400px", data: {
-          message: error.error.error,
+          message: "You need to select one document",
           type: "failed"
         }
       });
-    }))
-
+    } else if (!this.selectedProject.selected[0]) {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: "You need to select one project",
+          type: "failed"
+        }
+      });
+    }
   }
 }
