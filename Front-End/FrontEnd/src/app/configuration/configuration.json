@@ -41,6 +41,6 @@
     "neo4j": {
         "user": "pedro",
         "password": "teste",
-        "server_url": "bolt://localhost:7687"
+        "server_url": "bolt://localhost:11003"
     }
 }

@@ -2,10 +2,10 @@
     <div class="row1">
         <div class="row1-user-profile">
             <div *ngIf="userProfile.photo.original" style="width: auto; display: contents;">
-                <img [src]="userProfile.photo.original" style="border-radius: 50%;  height: 80%; width: auto; ">
+                <img [src]="userProfile.photo.original" style="border-radius: 50%;  height: 80%; width: auto; max-height: 100px; ">
             </div>
             <div *ngIf="!userProfile.photo.original" style="width: auto; display: contents;">
-                <img [src]="userProfile.photo.standard" style="border-radius: 50%;  height: 80%; width: auto; ">
+                <img [src]="userProfile.photo.standard" style="border-radius: 50%;  height: 80%; width: auto; max-height: 100px; ">
             </div>
 
             <div style="padding:10px;">
@@ -14,12 +14,12 @@
                 <p>{{userProfile.academic_status}}</p>
             </div>
         </div>
-        <div style="display: flex; align-items: flex-end; width: 50%; margin-right: 6%; justify-content: flex-end; ">
+        <div class="tabs-div" >
             <button class="tabs-buttons" (click)="setDocuments()">All Documents</button>
             <button class="tabs-buttons" (click)="setGroups()">My Groups</button>
         </div>
     </div>
-    <div style="height: 70%;" class="row2">
+    <div class="row2">
         <div class="column1" *ngIf="itsDocuments">
             <div class="column1-table-documents">
                 <table mat-table [dataSource]="documentSource" class="mat-elevation-z8" style="width: 100%;">
@@ -99,6 +99,6 @@
         </div>
     </div>
 </div>
-<div style="height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;">
+<div class="spinner" >
     <mat-spinner *ngIf="!isAuthenticated"></mat-spinner>
 </div>
