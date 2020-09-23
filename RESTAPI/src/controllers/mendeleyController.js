@@ -114,11 +114,18 @@ mendeleyController.createArticleFromMendeley = async (req, res) => {
         const articleCreated = await Article.create(articleToCreate);
         const projectToConnect = await Project.findById(project_id);
         const articleID = articleCreated.identity().low;
-
+       
         if (articleCreated && projectToConnect) {
+            let article = {};
             const queryToCreateRelation = "MATCH (a:Project),(b:Article)  WHERE ID(a) =" + project_id + " and ID(b) = " + articleID + " CREATE (a)-[x:OWN]->(b)";
+           
             instance.writeCypher(queryToCreateRelation);
-            return res.status(200).json({ success: "Article added with success" })
+
+            article = articleCreated.properties();
+            article.year = articleCreated.get('year').year.low;
+            article.articleID = articleID;
+
+            return res.status(200).json({ success: "Article added with success", article: article })
         } else {
             return res.status(400).json({ error: "Error occurred while attempting to add article!" });
         }
