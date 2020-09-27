@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-import { element } from 'protractor';
 import { ArticleService } from 'src/app/services/article/article.service';
 import { MendeleyApiService } from 'src/app/services/mendeley/mendeley-api.service';
 import { ProjectsService } from 'src/app/services/project/projects.service';
@@ -15,7 +14,8 @@ import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
   styleUrls: ['./mendeley-component.component.css']
 })
 export class MendeleyComponentComponent implements OnInit {
-  displayedArticleColumns: string[] = ['select', 'title'];
+  displayedArticleColumns: string[] = ['select', 'title', 'authors'];
+  displayProjects: string[] = ['select', 'title'];
   displayedGroups: string[] = ['title'];
   selectedProject = new SelectionModel<any>(false);
   selectedDocument = new SelectionModel<any>(false);
@@ -71,13 +71,13 @@ export class MendeleyComponentComponent implements OnInit {
       this.selectedDocument.clear() :
       this.documentSource.data.forEach(row => this.selectedDocument.select(row));
   }
-  
+
   masterToggleProject(): void {
     this.isAllSelectedProject() ?
       this.selectedProject.clear() :
       this.documentSource.data.forEach(row => this.selectedProject.select(row));
   }
-  
+
   /** The label for the checkbox on the passed row */
   checkboxLabel(row?: any): string {
     if (!row) {
@@ -143,19 +143,47 @@ export class MendeleyComponentComponent implements OnInit {
 
   getAllDocumentsByGroupID(id: any) {
     this.apiMendeley.getAllDocumentsByGroupID(id).subscribe(result => {
-      this.groupDocuments = result;
+      console.log(result);
+
+      let articles = [];
+      result.forEach(element => {
+        let article = element;
+        let authors = element.authors;
+        article.author = "";
+        if (authors !== "" && authors !== undefined) {
+          authors.forEach(element => {
+            article.author += element.first_name + " " + element.last_name + ";";
+          });
+        }
+        articles.push(article);
+      });
+
+      this.groupDocuments = articles;
+      console.log(this.groupDocuments);
       this.documentSource = new MatTableDataSource(this.groupDocuments);
       this.itsDocuments = true;
       this.itsGroups = false;
-      console.log(result);
     }, (error => {
       console.log(error);
-    }))
+    }));
   }
 
   getAllDocuments() {
     this.apiMendeley.getAllDocuments().subscribe(result => {
-      this.allDocuments = result;
+      let articles = [];
+      result.forEach(element => {
+        let article = element;
+        let authors = element.authors;
+        article.author = "";
+        if (authors !== "" && authors !== undefined) {
+          authors.forEach(element => {
+            article.author += element.first_name + " " + element.last_name + ";";
+          });
+        }
+        articles.push(article);
+      });
+
+      this.allDocuments = articles;
       this.documentSource = new MatTableDataSource(this.allDocuments);
       this.itsDocuments = true;
     }, (error => {
@@ -180,7 +208,7 @@ export class MendeleyComponentComponent implements OnInit {
 
         this.apiMendeley.getNotesForDocumentID(this.selectedDocument.selected[0].id).subscribe(result => {
           let notes = [];
-         
+
           result.forEach(element => {
             if (element.type == "sticky_note" || element.type == "note") {
               notes.push(element);
@@ -201,12 +229,18 @@ export class MendeleyComponentComponent implements OnInit {
               message: "Successfully added to the project",
               type: "success"
             }
-          }); 
+          });
         }, (error => {
           console.log(error);
         }))
       }, (error => {
         console.log(error);
+        const dialogRef = this.dialog.open(InfoDialogComponent, {
+          width: "400px", data: {
+            message: error.error.error,
+            type: "failed"
+          }
+        });
       }))
     } else if (!this.selectedDocument.selected[0]) {
       const dialogRef = this.dialog.open(InfoDialogComponent, {
