@@ -8,25 +8,20 @@ const projController = {};
 projController.createProject = async (req, res) => {
     const username = req.auth.username;
     const project_name = req.body.project_name;
+    
     const { error } = projectCreation(req.body);
-
-    console.log(req.body);
-    console.log(username);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
+
     const findedProject = await Project.find(project_name);
-    console.log(findedProject);
     if (findedProject) {
         let error = "Project name already exists!";
         return res.status(400).json(error);
     } else {
         try {
             const project = await Project.create(req.body);
-            console.log(await User.find(username));
             const user = await User.find(username);
-            console.log(project);
-            console.log(user);
             if (project && user) {
                 const project_id = project.identity().low;
                 const queryConnectRelationsNodeToProject = "MATCH (n:Project) WHERE ID(n)=" + project_id + " CREATE (n)-[:HAS_RELATIONS]->(a:Relations {name:'Relations'})";
@@ -34,7 +29,6 @@ projController.createProject = async (req, res) => {
                 const projectCreated = {};
 
                 projectCreated.project_name = project.get('project_name');
-                console.log(projectCreated.project_name);
                 projectCreated.description = project.get('description');
                 projectCreated.project_id = project_id;
                 projectCreated.subject = project.get('subject');
@@ -103,12 +97,11 @@ projController.editProject = async (req, res) => {
 
 projController.deleteProject = async (req, res) => {
     const project_id = req.params.project_id;
+    const queryDeleteProject = " MATCH (p:Project) WHERE id(p)=" + project_id + " WITH p OPTIONAL MATCH (p)-[:OWN]->(a:Article) WITH p,a OPTIONAL MATCH (a)-[:HAS_COMMENTARY]->(c) DETACH DELETE a,c WITH p OPTIONAL MATCH (p)-[:HAS_RELATIONS]->(d:Relations) WITH p,d OPTIONAL MATCH (d)-[:OWN]->(k) DETACH DELETE k,d,p";
+
     try {
-        const projectToDelete = await Project.findById(project_id);
-        if (projectToDelete) {
-            await projectToDelete.delete();
-            return res.status(200).json({ result: "Project was deleted!" });
-        }
+        instance.writeCypher(queryDeleteProject);
+        return res.status(200).json({ result: "Project was deleted!" });
     } catch (err) {
         console.log(err);
         return res.send(err);

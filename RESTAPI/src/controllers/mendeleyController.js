@@ -73,8 +73,9 @@ mendeleyController.createArticleFromMendeley = async (req, res) => {
             articleToCreate.isbn = article.identifiers.isbn;
         }
     }
-    if (article.year !== undefined) {
-        articleToCreate.year = article.year;
+    if (article.year !== undefined && article.year !== null && article.year !== "") {
+        let year = article.year.toString();
+        articleToCreate.year = year;
     }
     if (article.citation_key !== undefined) {
         articleToCreate.citation_key = article.citation_key;
@@ -89,7 +90,6 @@ mendeleyController.createArticleFromMendeley = async (req, res) => {
                 articleToCreate.author += element.first_name + " " + element.last_name + ";"
             });
         }
-        console.log(articleToCreate.author);
     }
     if (article.tags !== undefined) {
         if (article.tags.length > 0) {
@@ -122,7 +122,9 @@ mendeleyController.createArticleFromMendeley = async (req, res) => {
             instance.writeCypher(queryToCreateRelation);
 
             article = articleCreated.properties();
-            article.year = articleCreated.get('year').year.low;
+            if(articleCreated.get('year') !== null){
+                article.year = articleCreated.get('year').year.low;
+            }
             article.articleID = articleID;
 
             return res.status(200).json({ success: "Article added with success", article: article })

@@ -90,7 +90,6 @@ articleController.relateArticlesByID = async (req, res) => {
 
         instance.writeCypher(queryToRelate).then(result => {
             if (result) {
-                console.log(result);
                 return res.status(200).json({ sucess: "Relation created" });
             }
         });
@@ -124,8 +123,7 @@ articleController.getArticleInfoByID = async (req, res) => {
 
 articleController.getArticlesFromProjectID = async (req, res) => {
     const projectID = req.params.project_id;
-    const queryGetAllArticles = "MATCH (a:Project)-[x:OWN]->(b:Article) WHERE ID(a) = " + projectID + " Return (b)";
-
+    const queryGetAllArticles = "MATCH (n:Project)-[:OWN]->(b:Article) WHERE id(n)=" + projectID + " WITH n,b OPTIONAL MATCH (b)-[r]->(c:Article) WITH n,b, count (r) as rn OPTIONAL MATCH (b)<-[rl]-(j:Article)  WITH n,b, rn, count (rl) as rnToHim RETURN b,rn, rnToHim";
     try {
         instance.readCypher(queryGetAllArticles).then(result => {
             if (result) {
@@ -141,6 +139,8 @@ articleController.getArticlesFromProjectID = async (req, res) => {
                         article.year = result.records[i]._fields[0].properties.year.year.low;
                     }
                     article.articleID = result.records[i]._fields[0].identity.low;
+                    article.relatedToNumber = result.records[i]._fields[1].low;
+                    article.relatedToHim = result.records[i]._fields[2].low;
                     articles.push(article);
                 }
                 return res.status(200).json(articles);
@@ -181,14 +181,10 @@ articleController.addCommentToArticleByID = async (req, res) => {
 
 articleController.deleteArticle = async (req, res) => {
     const articleID = req.params.articleID;
+    const queryToDeleteArticle = "MATCH (n:Article) WHERE id(n)=" + articleID + " WITH n OPTIONAL MATCH (n)-[:HAS_COMMENTARY]->(c) DETACH DELETE c,n";
     try {
-        articleTodelete = await Article.findById(articleID);
-        if (articleTodelete) {
-            await articleTodelete.delete();
-            return res.status(200).json({ result: "Article was deleted!" });
-        } else {
-            return res.status(400).send("Problem occurred while deleting");
-        }
+        instance.writeCypher(queryToDeleteArticle);
+        return res.status(200).json({ result: "Article was deleted!" });
     } catch (err) {
         console.log(err);
         return res.send(err);
@@ -200,16 +196,33 @@ articleController.relateOneToMany = async (req, res) => {
     const articleID = req.body.articleID;
     const articlesToRelate = req.body.articles;
     const relationName = req.body.relationName;
-
-    verifyIfRelationExists(project_id, relationName);
-
-    newquery = "MATCH (a:Article) WHERE ID(a) =" + articleID + " WITH a "
-    for (let i = 0; i < articlesToRelate.length - 1; i++) {
-        newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[i].articleID + " CREATE (a)-[x:" + relationName + "]->(b) WITH a ";
-    }
-    newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[articlesToRelate.length - 1].articleID + " CREATE (a)-[x:" + relationName + "]->(b) ";
-
     try {
+        let checkRelation = true;
+        let proceed = true;
+
+        articlesToRelate.forEach(element => {
+            if (articleID == element.articleID) {
+                proceed = false;
+            }
+        });
+        if (relationName == "" || relationName == undefined) {
+            checkRelation = false;
+        }
+
+        if (!checkRelation) {
+            return res.status(400).json({ error: "You can't relate without a relation name" });
+        }
+        if (!proceed) {
+            return res.status(400).json({ error: "You can't relate the article to himself" });
+        }
+
+        verifyIfRelationExists(project_id, relationName);
+
+        newquery = "MATCH (a:Article) WHERE ID(a) =" + articleID + " WITH a "
+        for (let i = 0; i < articlesToRelate.length - 1; i++) {
+            newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[i].articleID + " CREATE (a)-[x:" + relationName + "]->(b) WITH a ";
+        }
+        newquery += "MATCH (b:Article) WHERE  ID(b)=" + articlesToRelate[articlesToRelate.length - 1].articleID + " CREATE (a)-[x:" + relationName + "]->(b) ";
         instance.writeCypher(newquery);
         return res.status(200).json({ success: "Articles Related with success" });
     } catch (err) {
@@ -228,7 +241,7 @@ articleController.getConfigForRunNeoVis = async (req, res) => {
         server_password: req.body.password,
         labels: {
             "Article": {
-                "caption": "title",
+
             },
             "Projeto": {
                 "caption": "project_name",
@@ -305,7 +318,7 @@ articleController.editArticle = async (req, res) => {
         (await findedArticle).update(req.body);
         return res.status(200).json({ success: "Article Updated!" });
     } else {
-        let error="Error trying to edit article!"
+        let error = "Error trying to edit article!"
         return res.status(401).json(error);
     }
 }
