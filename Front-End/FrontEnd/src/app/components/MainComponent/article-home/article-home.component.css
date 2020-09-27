@@ -93,7 +93,10 @@ width: 100%;
         width: 100%;
         overflow: auto;
 }
-  
+
+.mat-content{
+  flex: unset !important;
+}
 .mat-cell {
   padding: 8px 8px 8px 0;
 }

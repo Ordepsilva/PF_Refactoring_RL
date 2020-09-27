@@ -33,29 +33,34 @@ export class ArticleHomeComponent implements OnInit {
   displayedColumns: string[] = ['title', 'relationName', 'buttons'];
 
   constructor(public articleService: ArticleService, public route: ActivatedRoute, public dataService: dataService, public dialog: MatDialog, public router: Router) {
-
+    route.params.subscribe(val => {
+      this.articleID = this.route.snapshot.paramMap.get('articleID');
+      if (this.articleID) {
+        this.getArticleInfoById();
+        this.getCommentsFromArticleID(this.articleID);
+        this.loadRelatedArticles();
+        this.setTabAbout();
+      }
+    });
   }
 
   ngOnInit(): void {
     this.articleID = this.route.snapshot.paramMap.get('articleID');
     this.project_id = this.route.snapshot.paramMap.get('project_id');
     if (this.articleID) {
-      this.getArticleInfoById(this.articleID);
+      this.getArticleInfoById();
       this.getCommentsFromArticleID(this.articleID);
       this.loadRelatedArticles();
     }
   }
 
-  getArticleInfoById(id: number): void {
+  getArticleInfoById(): void {
     this.articleService.getArticleInfoByID(this.articleID).subscribe(result => {
-      if (result) {
-        this.article = result;
-        this.tabAbout = true;
-      }
+      this.article = result;
+      this.tabAbout = true;
     }, (error => {
       console.log(error);
-    }))
-
+    }));
   }
 
   getCommentsFromArticleID(id: number): void {
@@ -89,9 +94,9 @@ export class ArticleHomeComponent implements OnInit {
   loadRelatedArticles(): void {
     this.articleService.getArticlesRelatedToArticleID(this.articleID).subscribe(result => {
       this.relatedArticles = result;
-      if(this.relatedArticles.length > 0){
+      if (this.relatedArticles.length > 0) {
         document.getElementById("tabVisualization").removeAttribute("disabled");
-      }else{
+      } else {
         document.getElementById("tabVisualization").setAttribute("disabled", "disabled");
       }
       this.dataSource = new MatTableDataSource(this.relatedArticles);
@@ -122,7 +127,7 @@ export class ArticleHomeComponent implements OnInit {
   }
 
   openArticle(element: any): void {
-    this.router.navigate(["/articleHome/" + element.articleID]);
+    this.router.navigate(["/articleHome/" + element.article.articleID + "/" + this.project_id]);
   }
 
   createNewComment(): void {
