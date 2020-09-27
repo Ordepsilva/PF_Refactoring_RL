@@ -41,7 +41,7 @@ export class ProjectHomeComponent implements OnInit {
   articles = [];
   relations: Option[] = [];
   //Config
-  displayedColumns: string[] = ['title', 'year', 'createdAt', 'buttons'];
+  displayedColumns: string[] = ['title', 'year', 'nrRelate','createdAt', 'buttons'];
   displayedArticleColumns: string[] = ['select', 'title']
   selection = new SelectionModel<any>(true, []);
   selectedArticle = new SelectionModel<any>(false);
@@ -208,8 +208,7 @@ export class ProjectHomeComponent implements OnInit {
         article: element,
       }
     }).afterClosed().subscribe(result => {
-      this.dataSource = new MatTableDataSource(this.data_service.articles);
-      this.dataSource.paginator = this.paginator;
+      this.getMyArticles(this.project_id);
       if (result.result) {
         const dialogRef = this.dialog.open(InfoDialogComponent, {
           width: "400px", data: {
@@ -300,10 +299,17 @@ export class ProjectHomeComponent implements OnInit {
           type: "success"
         }
       });
+      this.getMyArticles(this.project_id);
       this.selectedArticle = new SelectionModel<any>(false);
       this.selection = new SelectionModel<any>(true, []);
       this.relationOption = "";
     }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error.error,
+          type: "failed"
+        }
+      });
       console.log(error);
     })
     );

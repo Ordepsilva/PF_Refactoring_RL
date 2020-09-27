@@ -14,7 +14,7 @@
             </span>
         </div>
         <div style="display: flex; width: auto;">
-            <button (click)="createArticle()"  class="row2-button"><span>New
+            <button (click)="createArticle()" class="row2-button"><span>New
                     Article</span></button>
         </div>
     </div>
@@ -55,7 +55,12 @@
                     <td mat-cell style="text-align: center;" *matCellDef="let element" (click)="openArticle(element)">
                         {{element.year}} </td>
                 </ng-container>
-
+                <!-- Name Column -->
+                <ng-container matColumnDef="nrRelate">
+                    <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Relations from others/to others/total</th>
+                    <td mat-cell style="text-align: center;" *matCellDef="let element" (click)="openArticle(element)">
+                       {{element.relatedToHim}}/{{element.relatedToNumber}}/{{element.relatedToHim + element.relatedToNumber}} </td>
+                </ng-container>
                 <!-- Weight Column -->
                 <ng-container matColumnDef="createdAt">
                     <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Created At </th>
@@ -188,7 +193,6 @@
 
         <div id="viz" class="viz" *ngIf="thirdTab" style="width: 100%; height: 100%; outline: none;"></div>
     </div>
-
     <div id="paginator" class="pagination_margin">
         <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
     </div>
