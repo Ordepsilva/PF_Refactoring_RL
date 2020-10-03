@@ -1,0 +1,165 @@
+<div style="width: auto; height: 100%; overflow: auto;">
+    <div class="row1">
+        <div style="width: auto;">
+            <div>
+                <h2>Upload Files</h2>
+            </div>
+            <div style="width: 100%; justify-content: center; text-align: center;">
+                <div class="container" appDnd (fileDropped)="onFileDropped($event)" style="cursor: pointer;">
+                    <input type="file" #fileDropRef id="fileDropRef"
+                        (change)="fileBrowseHandler($event.target.files)" />
+                    <span>Drag and drop file here</span>
+                    <p>or</p>
+                    <label for="fileDropRef">Browse for file</label>
+                </div>
+                <div class="files-list">
+                    <div class="single-file" *ngFor="let file of files; let i = index">
+                        <div class="file-icon" style="width: 50px">
+                            <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 58 58"
+                                style="enable-background:new 0 0 58 58;" xml:space="preserve">
+                                <polygon style="fill:#EDEADA;" points="51.5,14 37.5,0 6.5,0 6.5,58 51.5,58 " />
+                                <g>
+                                    <path style="fill:#CEC9AE;"
+                                        d="M16.5,23h25c0.552,0,1-0.447,1-1s-0.448-1-1-1h-25c-0.552,0-1,0.447-1,1S15.948,23,16.5,23z" />
+                                    <path style="fill:#CEC9AE;"
+                                        d="M16.5,15h10c0.552,0,1-0.447,1-1s-0.448-1-1-1h-10c-0.552,0-1,0.447-1,1S15.948,15,16.5,15z" />
+                                    <path style="fill:#CEC9AE;"
+                                        d="M41.5,29h-25c-0.552,0-1,0.447-1,1s0.448,1,1,1h25c0.552,0,1-0.447,1-1S42.052,29,41.5,29z" />
+                                    <path style="fill:#CEC9AE;"
+                                        d="M41.5,37h-25c-0.552,0-1,0.447-1,1s0.448,1,1,1h25c0.552,0,1-0.447,1-1S42.052,37,41.5,37z" />
+                                    <path style="fill:#CEC9AE;"
+                                        d="M41.5,45h-25c-0.552,0-1,0.447-1,1s0.448,1,1,1h25c0.552,0,1-0.447,1-1S42.052,45,41.5,45z" />
+                                </g>
+                                <polygon style="fill:#CEC9AE;" points="37.5,0 37.5,14 51.5,14 " />
+                            </svg>
+                        </div>
+                        <div class="info">
+                            <h4 class="name">
+                                {{ file?.name }}
+                            </h4>
+                            <p class="size">
+                                {{ formatBytes(file?.size)}}
+                            </p>
+                        </div>
+
+                        <div class="delete" (click)="deleteFile(i)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="18" viewBox="0 0 14 18">
+                                <path fill="#B1B1B1" fill-rule="nonzero"
+                                    d="M1 16c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v10zm3.17-7.83a.996.996 0 0 1 1.41 0L7 9.59l1.42-1.42a.996.996 0 1 1 1.41 1.41L8.41 11l1.42 1.42a.996.996 0 1 1-1.41 1.41L7 12.41l-1.42 1.42a.996.996 0 1 1-1.41-1.41L5.59 11 4.17 9.58a.996.996 0 0 1 0-1.41zM10.5 1L9.79.29C9.61.11 9.35 0 9.09 0H4.91c-.26 0-.52.11-.7.29L3.5 1H1c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-2.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div (click)="uploadFiles()" *ngIf="files.length > 0" style="width: auto;">
+                        <button
+                            style="background-color: darkslategray; padding: 10px; min-width: 100px; color: white; border: none; cursor: pointer;">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row2">
+        <div>
+            <h2>Add files to your articles</h2>
+        </div>
+        <div class="row2-container">
+            <div class="row2-container-column">
+
+                <div class="row2-container-column1" *ngIf="fileSource !== undefined">
+                    <table mat-table [dataSource]="fileSource" class="mat-elevation-z8" style="width: 100%;">
+                        <ng-container matColumnDef="select">
+                            <th mat-header-cell *matHeaderCellDef style="width: 10%; padding: 10px;">
+                                <mat-checkbox [checked]="selectedFile.hasValue() && isAllSelected()"
+                                    [indeterminate]="selectedFile.hasValue() && !isAllSelected()"
+                                    [aria-label]="checkboxLabel()">
+                                </mat-checkbox>
+                            </th>
+                            <td mat-cell *matCellDef="let row" style="width: 10%; padding: 10px;">
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                    (change)="$event ? selectedFile.toggle(row) : null"
+                                    [checked]="selectedFile.isSelected(row)" [aria-label]="checkboxLabel(row)">
+                                </mat-checkbox>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef style="width: 70%; font-size: 15px;"> Uploaded Files:
+                            </th>
+                            <td mat-cell *matCellDef="let element" style="width: 70%;"> {{element}} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="options">
+                            <th mat-header-cell *matHeaderCellDef style="width: 70%; font-size: 15px;"> </th>
+                            <td mat-cell *matCellDef="let element" style="width: 70%; text-align: right;">
+                                <mat-icon class="project_buttons" (click)="deleteFileFromUploaded(element)"
+                                    title="Click to delete File" style=" color: red; cursor: pointer;"
+                                    aria-hidden="true">delete
+                                </mat-icon>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedFileColumns; sticky: true"
+                            style="position: sticky;">
+                        </tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedFileColumns;">
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row2-container-column2">
+                <button (click)="addFileToArticle()"
+                    style=" padding: 10px; color: white; background-color: darkslategray; border: none; cursor: pointer;">Connect
+                    to</button>
+            </div>
+            <div class="row2-container-column">
+                <div class="row2-container-column3">
+
+                    <div *ngIf="isProjects">
+                        <table mat-table [dataSource]="projectSource" class="mat-elevation-z8" style="width: 100%;">
+                            <ng-container matColumnDef="title">
+                                <th mat-header-cell *matHeaderCellDef style="width: 90%; font-size: 15px;"> My Projects
+                                </th>
+                                <td mat-cell *matCellDef="let element" style="width: 90%;"> {{element.project_name}}
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedProjects" style="position: sticky;">
+                            </tr>
+                            <tr mat-row style="cursor: pointer;" *matRowDef="let row; columns: displayedProjects;"
+                                (click)="getAllArticlesFromProject(row.project_id)">
+                            </tr>
+                        </table>
+                    </div>
+                    <div *ngIf="isArticles">
+                        <table mat-table [dataSource]="articleSource" class="mat-elevation-z8" style="width: 100%;">
+                            <ng-container matColumnDef="select">
+                                <th mat-header-cell *matHeaderCellDef style="width: 10%; padding: 10px;">
+                                    <mat-checkbox [checked]="articleSelect.hasValue() && isAllSelectedArticle()"
+                                        [indeterminate]="articleSelect.hasValue() && !isAllSelectedArticle()"
+                                        [aria-label]="checkboxLabelArticle()">
+                                    </mat-checkbox>
+                                </th>
+                                <td mat-cell *matCellDef="let row" style="width: 10%; padding: 10px;">
+                                    <mat-checkbox (click)="$event.stopPropagation()"
+                                        (change)="$event ? articleSelect.toggle(row) : null"
+                                        [checked]="articleSelect.isSelected(row)"
+                                        [aria-label]="checkboxLabelArticle(row)">
+                                    </mat-checkbox>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="title">
+                                <th mat-header-cell *matHeaderCellDef style="width: 90%; font-size: 15px;justify-content: space-between;"> Article
+                                    Title <button
+                                        style="background-color: darkslategray; color: white; padding: 10px; border: none; cursor: pointer; margin-left:20px;"
+                                        (click)="setProjectsTable()">Go back to my Projects</button> </th>
+                                <td mat-cell *matCellDef="let element" style="width: 90%;"> {{element.title}}</td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayArticles" style="position: sticky;">
+                            </tr>
+                            <tr mat-row *matRowDef="let row; columns: displayArticles;"
+                                (click)="articleSelect.toggle(row)">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
