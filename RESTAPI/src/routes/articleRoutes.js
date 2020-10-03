@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authorized } = require('../middlewares/authorize');
 const articleController = require("../controllers/articleController");
-
+const { uploadFile } = require('../middlewares/upload');
 /**
  * @swagger
  * /articles/createArticle/{project_id}:
@@ -295,7 +295,193 @@ router.post('/getConfigForRunNeoVis/:project_id', authorized(), articleControlle
  *      '200':
  *        description: Object with config for NeoVis
  */
-router.post('/getConfigForArticleID/:articleID',authorized(), articleController.getConfigForArticleID);
+router.post('/getConfigForArticleID/:articleID', authorized(), articleController.getConfigForArticleID);
+
+/**
+ * @swagger
+ * /articles/uploadFile:
+ *  post:
+ *    tags: 
+ *        - Articles
+ *    name: Upload File
+ *    summary: Upload File
+ *    security:
+ *      - bearerAuth: []
+ *    consumes:
+ *      - multipart/form-data
+ *    parameters:
+ *      - in: formData
+ *        name: file
+ *        type: file
+ *        description: The file to upload.
+ *    responses:
+ *      '200':
+ *        description: File associated successfully!
+ */
+router.post('/uploadFile', authorized(), uploadFile, articleController.uploadFile);
+
+/**
+ * @swagger
+ * /articles/removeFileFromArticle/{articleID}:
+ *  post:
+ *    tags: 
+ *        - Articles
+ *    name: Remove file from article
+ *    summary: Remove file from article using articleID
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/json
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - name: articleID
+ *        articleID: 
+ *          type: number
+ *        in: path
+ *        required:
+ *              - articleID
+ *      - name: body
+ *        in: body
+ *        properties:
+ *              filename:
+ *                  type: string
+ *        required:
+ *              - filename
+ *    responses:
+ *      '200':
+ *        description: File Removed successfully!
+ */
+router.post('/removeFileFromArticle/:articleID', authorized(), articleController.removeFileFromArticle);
+
+/**
+ * @swagger
+ * /articles/deleteFileByFileName:
+ *  post:
+ *    tags: 
+ *        - Articles
+ *    name: Delete file
+ *    summary: Delete file by filename
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/json
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - name: body
+ *        in: body
+ *        properties:
+ *              filename:
+ *                  type: string
+ *        required:
+ *              - filename
+ *    responses:
+ *      '200':
+ *        description: File deleted successfully!
+ */
+router.post('/deleteFileByFileName', authorized(), articleController.deleteFile);
+
+/**
+ * @swagger
+ * /articles/getConfigForRunNeoVis/{project_id}:
+ *  post:
+ *    tags: 
+ *        - Articles
+ *    name: Get config Neovis
+ *    summary: Get config to run Neovis for one project
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/json
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - name: project_id
+ *        project_id: 
+ *          type: number
+ *        in: path
+ *        required:
+ *              - project_id
+ *      - name: body
+ *        in: body
+ *        properties:
+ *              server_url:
+ *                  type: string
+ *              user:
+ *                  type: string      
+ *              password:
+ *                  type: string
+ *        required:
+ *              - server_url
+ *              - user
+ *              - password
+ *    responses:
+ *      '200':
+ *        description: Object with config for NeoVis
+ */
+router.post('/getConfigForRunNeoVis/:project_id', authorized(), articleController.getConfigForRunNeoVis);
+
+/**
+ * @swagger
+ * /articles/associateFileToArticle/{articleID}:
+ *  post:
+ *    tags: 
+ *        - Articles
+ *    name: associateFileToArticle
+ *    summary: Associate uploaded file to article
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/json
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - name: articleID
+ *        articleID: 
+ *          type: number
+ *        in: path
+ *        required:
+ *              - articleID
+ *      - name: body
+ *        in: body
+ *        properties:
+ *              filename:
+ *                  type: string
+ *        required:
+ *              - filename
+ *    responses:
+ *      '200':
+ *        description: File associated successfully!
+ */
+router.post('/associateFileToArticle/:articleID', authorized(), articleController.associateFileToArticle);
+
+/**
+ * @swagger
+ * /articles/downloadFile/{filename}:
+ *  get:
+ *    tags: 
+ *        - Articles
+ *    name: Download File
+ *    summary: Download File
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/pdf
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - name: filename
+ *        filename: 
+ *          type: string
+ *        in: path
+ *        required:
+ *              - filename
+ *    responses:
+ *      '200':
+ *        description: File downloaded
+ */
+router.get('/downloadFile/:filename', authorized(), articleController.downloadFile);
 
 /**
  * @swagger
@@ -355,6 +541,34 @@ router.get('/getArticleInfoByID/:articleID', authorized(), articleController.get
  */
 router.get('/getRelationsForProjectID/:project_id', authorized(), articleController.getRelationsForProjectID);
 
+/**
+ * @swagger
+ * /articles/getFilesForArticleID/{articleID}:
+ *  get:
+ *    tags: 
+ *        - Articles
+ *    name: Get Files for article ID
+ *    summary: Get all files for Article by ArticleID
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/json
+ *    consumes:
+ *      - application/json
+ *    parameters:
+ *      - name: articleID
+ *        articleID: 
+ *          type: number
+ *        in: path
+ *        required:
+ *              - articleID
+ *    responses:
+ *      '200':
+ *        description: Array response with all files related to articleID 
+ *      '404':
+ *        description: No files found
+ */
+router.get('/getFilesForArticleID/:articleID', authorized(), articleController.getFilesForArticleID);
 
 /**
  * @swagger
@@ -443,6 +657,26 @@ router.get('/getArticlesFromProjectID/:project_id', authorized(), articleControl
  *        description: Article doesn't exist 
  */
 router.get('/getCommentsFromArticleID/:articleID', authorized(), articleController.getCommentsFromArticleID);
+
+/**
+ * @swagger
+ * /articles/getAllUploadedFiles:
+ *  get:
+ *    tags: 
+ *        - Articles
+ *    name: Get all uploaded files
+ *    summary: Gel all uploaded files
+ *    security:
+ *      - bearerAuth: []
+ *    produces:
+ *      - application/json
+ *    responses:
+ *      '200':
+ *        description: Array response with all the files
+ *      '400':
+ *        description: Doesn't exist any file 
+ */
+router.get('/getAllUploadedFiles', authorized(), articleController.getAllUploadedFiles);
 
 /**
  * @swagger
