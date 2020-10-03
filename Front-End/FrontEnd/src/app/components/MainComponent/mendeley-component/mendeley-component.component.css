@@ -30,7 +30,6 @@
   }
   .row2{
     border: 1px solid rgba(0, 0, 0, 0.8);
-    border-radius: 15px;
     height: 70%;
      margin-left: 5%;
     margin-right: 5%;
@@ -92,7 +91,6 @@
         background-color: darkslategray;
         color: white;
         width: 100%;
-        border-radius: 20px;
         border: none;
         cursor: pointer;
         }
