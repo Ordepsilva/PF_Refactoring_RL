@@ -2,6 +2,7 @@ const instance = require('../database/database');
 const Project = require('../models/Project');
 const Article = require('../models/Article');
 const Comment = require('../models/Comment');
+const fs = require('fs').promises;
 const { articleCreation, commentCreation, editArticleValidation } = require('../validations/articleValidation');
 const articleController = {};
 
@@ -241,7 +242,7 @@ articleController.getConfigForRunNeoVis = async (req, res) => {
         server_password: req.body.password,
         labels: {
             "Article": {
-
+                "caption": "citation_key"
             },
             "Projeto": {
                 "caption": "project_name",
@@ -391,7 +392,7 @@ articleController.getConfigForArticleID = async (req, res) => {
         server_password: req.body.password,
         labels: {
             "Article": {
-                "caption": "title",
+                "caption": "citation_key",
             },
         },
         relationships: {
@@ -402,6 +403,152 @@ articleController.getConfigForArticleID = async (req, res) => {
         initial_cypher: query
     };
     return res.status(200).json(config);
+}
+
+articleController.associateFileToArticle = async (req, res) => {
+    const articleID = req.params.articleID;
+    const filename = req.body.filename;
+    const dir = './src/uploadDatabase/uploaded';
+    const checkIfFileAlreadyExist = "MATCH (n:Article)-[:HAS_FILES]->(f:File) WHERE id(n)=" + articleID + " AND f.name = '" + filename + "' RETURN f";
+    const createNodeFile = "MATCH (n:Article) WHERE id(n)=" + articleID + " CREATE (n)-[:HAS_FILES]->(d:File {name:'" + filename + "'}) RETURN n,d";
+    let exist = false;
+    try {
+        let result = instance.readCypher(checkIfFileAlreadyExist);
+        if ((await result).records.length > 0) {
+            return res.status(400).json({ error: "File already exist in article" });
+        }
+        const files = await fs.readdir(dir);
+        for (let element in files) {
+            if (files[element] == filename) {
+                exist = true;
+            }
+        };
+        if (exist) {
+            instance.writeCypher(createNodeFile).then(result => {
+                return res.status(200).json({ success: "File associated successfully!" });
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.json(error);
+    }
+}
+
+articleController.getAllUploadedFiles = async (req, res) => {
+    const dir = './src/uploadDatabase/uploaded';
+
+    const files = await fs.readdir(dir);
+    if (files.length > 0) {
+        let filesArray = [];
+        for (let element in files) {
+            filesArray.push(files[element]);
+        };
+        return res.status(200).json(filesArray);
+    } else {
+        return res.status(400).json({ error: "Doesn't exist any file" })
+    }
+}
+
+articleController.uploadFile = async (req, res) => {
+    const file = "./src/uploadDatabase/uploaded/" + req.file.filename;
+    const dir = './src/uploadDatabase/uploaded';
+    try {
+        const files = await fs.readdir(dir);
+
+        for (let element in files) {
+            if (files[element] == req.file.filename) {
+                await fs.unlink(req.file.path);
+                return res.status(400).json({ error: "File already exist!" });
+            }
+        };
+
+        const data = await fs.readFile(req.file.path);
+        await fs.writeFile(file, data);
+        await fs.unlink(req.file.path);
+        return res.status(200).json({ success: "The file was uploaded!" });
+
+    } catch (error) {
+        console.log(error);
+        return res.json(error);
+    }
+}
+
+articleController.downloadFile = async (req, res) => {
+    const filename = req.params.filename;
+    const dir = './src/uploadDatabase/uploaded';
+    const filePath = dir + '/' + filename;
+    try {
+        const files = await fs.readdir(dir);
+        for (let element in files) {
+            if (files[element] == filename) {
+                res.set("content-type", "application/pdf");
+                return res.status(200).download(filePath, filename);
+            }
+        };
+        return res.status(400).json({ error: "File doesn't exist" });
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send(err);
+    }
+}
+
+articleController.getFilesForArticleID = async (req, res) => {
+    const articleID = req.params.articleID;
+    const queryToGetAllFiles = "MATCH (n:Article)-[:HAS_FILES]->(f:File) WHERE id(n)=" + articleID + " RETURN f";
+    try {
+        instance.readCypher(queryToGetAllFiles).then(result => {
+            let files = [];
+
+            if (result.records.length > 0) {
+                for (let element in result.records) {
+                    let file = result.records[element]._fields[0].properties;
+                    files.push(file);
+                }
+                return res.status(200).json(files);
+            } else {
+                return res.status(404).json({ message: "No files found" });
+            }
+        })
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
+}
+
+articleController.removeFileFromArticle = async (req, res) => {
+    const articleID = req.params.articleID;
+    const filename = req.body.filename;
+    console.log(filename);
+    const queryToRemoveFile = "MATCH (n:Article)-[:HAS_FILES]->(f:File) WHERE id(n)=" + articleID + " AND f.name='" + filename + "' DETACH DELETE f";
+    console.log(queryToRemoveFile);
+    try {
+        instance.writeCypher(queryToRemoveFile);
+        return res.status(200).json({ success: "File removed successfully!" });
+    } catch (err) {
+        console.log(error);
+        return res.json(err);
+    }
+}
+
+articleController.deleteFile = async (req, res) => {
+    const filename = req.body.filename;
+    const dir = './src/uploadDatabase/uploaded';
+    const filePath = dir + "/" + filename;
+    const queryRemoveFileFromArticles = "Match (f:File) WHERE f.name ='" + filename + "' DETACH DELETE f";
+    try {
+        const files = await fs.readdir(dir);
+        console.log(files);
+        for (let element in files) {
+            if (files[element] == filename) {
+                await fs.unlink(filePath);
+                instance.writeCypher(queryRemoveFileFromArticles);
+                return res.status(200).json({ success: "File deleted successfully!" });
+            }
+        };
+    } catch (err) {
+        console.log(err);
+        return res.json(err);
+    }
 }
 
 async function verifyIfRelationExists(project_id, relationName) {

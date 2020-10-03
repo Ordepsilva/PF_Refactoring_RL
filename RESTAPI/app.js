@@ -6,6 +6,7 @@ const session = require('./src/middlewares/session');
 const routes = require('./src/routes/generalRoutes');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const multer = require('./src/middlewares/upload');
 
 const swaggerOptions = {
     swaggerDefinition: {
@@ -36,7 +37,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use(cors());
 app.use(bodyparser.json());
 app.use(session);
-
 //Routes
 app.use('/', routes);
 
