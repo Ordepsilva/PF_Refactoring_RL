@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ArticleService } from 'src/app/services/article/article.service';
-import Cookies from 'js-cookie';
 import { dataService } from 'src/app/services/dataService';
 import { ArticleDialogComponent } from '../article-dialog/article-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +9,8 @@ import * as config from 'src/app/configuration/configuration.json';
 import * as NeoVis from 'src/app/components/MainComponent/project-home/neovis';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as fileSaver from 'file-saver/';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-article-home',
@@ -18,19 +19,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class ArticleHomeComponent implements OnInit {
   title: any;
-  isloaded = true;
+  isloaded: boolean = true;
   //Tabs
+  tabFiles: boolean = false;
   tabAbout: boolean = false;
   tabVisualize: boolean = false;
   tabRelatedArticles: boolean = false;
   //data
-  dataSource;
-  relatedArticles = [];
-  comments = [];
+  dataSource: any;
+  fileSource: any;
+  relatedArticles: any[] = [];
+  comments: any[] = [];
+  files: any[] = [];
   article: any;
   articleID: any;
   project_id: any;
   displayedColumns: string[] = ['title', 'relationName', 'buttons'];
+  displayedFiles: string[] = ['name', 'download', 'options'];
 
   constructor(public articleService: ArticleService, public route: ActivatedRoute, public dataService: dataService, public dialog: MatDialog, public router: Router) {
     route.params.subscribe(val => {
@@ -75,6 +80,7 @@ export class ArticleHomeComponent implements OnInit {
     this.tabAbout = true;
     this.tabVisualize = false;
     this.tabRelatedArticles = false;
+    this.tabFiles = false;
   }
 
   setTabVisualize(): void {
@@ -82,6 +88,7 @@ export class ArticleHomeComponent implements OnInit {
     this.tabVisualize = true;
     this.tabAbout = false;
     this.tabRelatedArticles = false;
+    this.tabFiles = false;
   }
 
   setTabRelatedArticles(): void {
@@ -89,6 +96,14 @@ export class ArticleHomeComponent implements OnInit {
     this.tabRelatedArticles = true;
     this.tabAbout = false;
     this.tabVisualize = false;
+    this.tabFiles = false;
+  }
+  setTabFiles(): void {
+    this.tabFiles = true;
+    this.tabRelatedArticles = false;
+    this.tabAbout = false;
+    this.tabVisualize = false;
+    this.getFilesFromArticleID();
   }
 
   loadRelatedArticles(): void {
@@ -202,5 +217,54 @@ export class ArticleHomeComponent implements OnInit {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  getFilesFromArticleID(): void {
+    this.isloaded = false;
+    this.articleService.getFilesForArticleID(this.articleID).subscribe(result => {
+      this.files = result;
+      this.fileSource = new MatTableDataSource(this.files);
+      this.isloaded = true;
+    }, (error => {
+      if(error.status == "404"){
+        this.files = [];
+        this.fileSource = new MatTableDataSource(this.files);
+      }
+      this.isloaded = true;
+    }))
+  }
+
+  downloadFile(element: string) {
+    this.articleService.downloadFile(element).subscribe({
+      next(result) {
+        let blob: any = new Blob([result], { type: 'application/pdf; charset=utf-8' });
+        fileSaver.saveAs(blob, element);
+      }, error(msg) {
+        let blob: any = new Blob([msg], { type: 'application/pdf; charset=utf-8' });
+        fileSaver.saveAs(blob, element);
+      }
+    });
+    const dialogRef = this.dialog.open(InfoDialogComponent, {
+      width: "400px", data: {
+        message: "File is downloading...",
+        type: "success"
+      }
+    });
+  }
+
+  removeFileFromArticle(filename: string) {
+    console.log(filename);
+    console.log(this.articleID);
+    this.articleService.removeFileFromArticleID(filename, this.articleID).subscribe(result => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: result.success,
+          type: "success"
+        }
+      });
+      this.getFilesFromArticleID();
+    }, (error => {
+      console.log(error);
+    }))
   }
 }

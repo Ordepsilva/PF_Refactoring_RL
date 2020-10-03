@@ -30,7 +30,6 @@ width: 100%;
     margin-right: 5%;
     margin-left: 5%;
     border:1px black solid;
-    border-radius: 25px;
     height: 90%;
     width: auto;
 }
@@ -39,7 +38,6 @@ width: 100%;
     background-color: darkslategray;
     color: white;
     border: none;
-    border-radius: 20px;
 }
 
 
@@ -49,6 +47,7 @@ width: 100%;
     margin-top: 2%;
     height: 100%;
     text-align: right;
+    margin-left: 5%;display: flex;
     margin-right: 7%;
   }
   .tabs-buttons{
@@ -87,8 +86,7 @@ width: 100%;
   }
 
   /**TABLE**/
-.table-container{
-    border-radius: 25px;  
+.table-container{  
         height:100%;
         width: 100%;
         overflow: auto;
@@ -139,11 +137,9 @@ background-color: #f7f7f7;
 } 
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;
-  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
   background: black;
-  border-radius: 15px;
 }
 .margin-top-div{
   height: 5%;
@@ -162,15 +158,30 @@ background-color: #f7f7f7;
 }
 
 .tabs-design-space{
-  width: 10%; text-align: left; margin-left: 1%;
+  width: auto; text-align: left; margin-left: 1%;
+}
+.comment-container{
+  width: 100%; height: 90%; overflow-y: auto;
 }
 @media screen and (max-width: 800px) {
   .mainContent{
     overflow: auto;
   }
+  .comment-container{
+    overflow: unset;
+  }
+  .column2{
+    overflow: unset;
+  }
   .row2{
     height: 100%;
     margin-top: 10%;
+  }
+  .row1{
+    height: auto;
+  }
+  .tabs-design{
+    display: unset
   }
 .about-content{
   display: unset;
@@ -197,9 +208,7 @@ background-color: #f7f7f7;
   width: 100%;
   display: flex;
 }
-.tabs-design-space{
-  width: 0;
-}
+
 }
 
 @media screen and (max-width: 1000px) {
