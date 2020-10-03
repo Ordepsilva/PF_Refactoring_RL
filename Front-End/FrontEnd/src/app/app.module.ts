@@ -33,12 +33,13 @@ import { MatTableModule } from '@angular/material/table';
 import { dataService } from './services/dataService';
 import { InfoDialogComponent } from './components/MainComponent/info-dialog/info-dialog.component';
 import { ProjectHomeComponent } from './components/MainComponent/project-home/project-home.component';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ArticleDialogComponent } from './components/MainComponent/article-dialog/article-dialog.component';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ArticleHomeComponent } from './components/MainComponent/article-home/article-home.component';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MendeleyComponentComponent } from './components/MainComponent/mendeley-component/mendeley-component.component';
+import { FilesComponent } from './components/MainComponent/files/files.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,6 +53,7 @@ import { MendeleyComponentComponent } from './components/MainComponent/mendeley-
     ArticleDialogComponent,
     ArticleHomeComponent,
     MendeleyComponentComponent,
+    FilesComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,9 +82,9 @@ import { MendeleyComponentComponent } from './components/MainComponent/mendeley-
     MatTabsModule,
     MatCheckboxModule,
     MatExpansionModule
-    
+
   ],
-  providers: [AuthenticationServiceService, ProjectsService, dataService,  { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true }],
+  providers: [AuthenticationServiceService, ProjectsService, dataService, { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -29,6 +29,7 @@ export class ArticleDialogComponent implements OnInit {
   deleteRelation = false;
   deleteCommentary = false;
   createComment = false;
+  deleteFile = false;
   //data
   project_id: string;
   articleToDelete: any = {};
@@ -60,6 +61,8 @@ export class ArticleDialogComponent implements OnInit {
       this.createComment = true;
     } else if (this.data_service.optionString == "deleteCommentary") {
       this.deleteCommentary = true;
+    } else if (this.data_service.optionString == "deleteFile") {
+      this.deleteFile = true;
     }
   }
 
@@ -202,5 +205,22 @@ export class ArticleDialogComponent implements OnInit {
         }
       });
     }));
+  }
+
+  deleteFileName(): void {
+    let body: any = {};
+    let filename = this.data.filename;
+    console.log(filename);
+    body.filename = filename;
+    this.articleService.deleteFile(body).subscribe(result => {
+      this.dialogRef.close({ result: result });
+    }, (error => {
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: error.error,
+          type: "failed"
+        }
+      });
+    }))
   }
 }

@@ -8,6 +8,7 @@ import { ProjectHomeComponent } from './components/MainComponent/project-home/pr
 import { ArticleHomeComponent } from './components/MainComponent/article-home/article-home.component';
 import { MendeleyComponentComponent } from './components/MainComponent/mendeley-component/mendeley-component.component';
 import { RegisterComponent } from './components/authentication/register/register.component';
+import { FilesComponent } from './components/MainComponent/files/files.component';
 
 
 const routes: Routes = [
@@ -20,7 +21,8 @@ const routes: Routes = [
       { path: 'home', component: ProjectsComponent },
       { path: 'projectHome/:project_id', component: ProjectHomeComponent },
       { path: 'articleHome/:articleID/:project_id', component: ArticleHomeComponent },
-      { path: 'mendeley', component: MendeleyComponentComponent }
+      { path: 'mendeley', component: MendeleyComponentComponent },
+      { path: 'files', component: FilesComponent }
     ],
     canActivate: [AuthGuardService]
   }
