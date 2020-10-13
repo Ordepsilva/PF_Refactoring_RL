@@ -40,6 +40,7 @@ import { ArticleHomeComponent } from './components/MainComponent/article-home/ar
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MendeleyComponentComponent } from './components/MainComponent/mendeley-component/mendeley-component.component';
 import { FilesComponent } from './components/MainComponent/files/files.component';
+
 @NgModule({
   declarations: [
     AppComponent,

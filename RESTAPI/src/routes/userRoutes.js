@@ -11,7 +11,7 @@ const userController = require("../controllers/userController");
  *    tags: 
  *        - Users
  *    name: Login
- *    summary: Logs in a user
+ *    summary: Authenticate a user
  *    produces:
  *      - application/json
  *    consumes:
@@ -77,7 +77,7 @@ router.post('/register', userController.register);
 *     tags:
 *       - Users
 *     name: GetUserInfo
-*     summary: Returns the authenticated user info
+*     summary: Get the authenticated user info
 *     security:
 *       - bearerAuth: []
 *     produces:

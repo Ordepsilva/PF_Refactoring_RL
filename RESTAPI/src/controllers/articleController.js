@@ -170,8 +170,8 @@ articleController.addCommentToArticleByID = async (req, res) => {
             const commentID = commentCreated.identity().low;
             const queryAddCommentToArticle = "MATCH (a:Article),(b:Comment) WHERE ID(a)=" + articleID + " and ID(b)=" + commentID + " CREATE (a)-[x:HAS_COMMENTARY]->(b)";
             instance.writeCypher(queryAddCommentToArticle);
-            comment.commentID = commentID;
             comment = commentCreated.properties();
+            comment.commentID = commentID;
             return res.status(200).json({ sucess: "Comment Created", comment });
         }
     } catch (err) {

@@ -91,6 +91,7 @@ export class ArticleDialogComponent implements OnInit {
   }
 
   createArticle(): void {
+    console.log(this.articleToCreate);
     this.articleService.createArticle(this.articleToCreate, this.project_id).subscribe(
       result => {
         this.data_service.articles.push(result.article);
@@ -183,6 +184,7 @@ export class ArticleDialogComponent implements OnInit {
     body.commentary = this.commentary;
 
     this.articleService.addCommentToArticleByID(this.data.articleID, body).subscribe(result => {
+      console.log(result);
       this.dialogRef.close({ comment: result.comment });
     }, (error => {
       const dialogRef = this.dialog.open(InfoDialogComponent, {

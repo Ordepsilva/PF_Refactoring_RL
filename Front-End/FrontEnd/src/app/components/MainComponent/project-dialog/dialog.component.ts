@@ -58,9 +58,19 @@ export class DialogComponent implements OnInit {
 
   verifyProj(): void {
     if (this.project.project_name === "") {
-      alert("Please insert a project name!");
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: "Please insert a project name!",
+          type: "failed"
+        }
+      });
     } else if (this.project.subject === "") {
-      alert("Please insert a subject");
+      const dialogRef = this.dialog.open(InfoDialogComponent, {
+        width: "400px", data: {
+          message: "Please insert a subject",
+          type: "failed"
+        }
+      });
     } else if (this.data_service.optionString == "create") {
       this.createProj();
     } else if (this.data_service.optionString == "edit") {

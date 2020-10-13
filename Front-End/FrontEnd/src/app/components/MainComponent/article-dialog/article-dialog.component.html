@@ -17,7 +17,7 @@
       </mat-form-field>
     </th>
     <td>
-      <button (click)="removeFormField('year'); year.value=''"
+      <button (click)="removeFormField('year'); articleToCreate.year = undefined"
         style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -33,7 +33,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('abstract'); abstract.value=''"
+      <button (click)="removeFormField('abstract'); articleToCreate.abstract=undefined"
         style="border: none; cursor: pointer;background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -49,7 +49,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('author'); author.value=''"
+      <button (click)="removeFormField('author'); articleToCreate.author=undefined"
         style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -65,7 +65,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('tags'); tags.value=''"
+      <button (click)="removeFormField('tags'); articleToCreate.tags= undefined"
         style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -81,7 +81,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('citation_key'); citation_key.value=''"
+      <button (click)="removeFormField('citation_key'); articleToCreate.citation_key=undefined"
         style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -97,7 +97,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('edition'); edition.value=''"
+      <button (click)="removeFormField('edition'); articleToCreate.edition= undefined"
         style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -113,7 +113,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('doi'); doi.value=''"
+      <button (click)="removeFormField('doi'); articleToCreate.doi = undefined"
         style="border: none;cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete
@@ -129,7 +129,7 @@
       </mat-form-field>
     </td>
     <td>
-      <button (click)="removeFormField('isbn'); isbn.value=''"
+      <button (click)="removeFormField('isbn'); articleToCreate.isbn = undefined"
         style="border: none; cursor: pointer; background-color: transparent;"><span style="color: red;"
           class="material-icons">
           delete

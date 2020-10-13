@@ -4,6 +4,8 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { User } from 'src/app/models/User';
 import { Router } from '@angular/router';
 import { AuthenticationServiceService } from 'src/app/services/authentication/authentication-service.service';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoDialogComponent } from '../../MainComponent/info-dialog/info-dialog.component';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -16,7 +18,7 @@ export class LoginComponent implements OnInit {
   matcher = new MyErrorStateMatcher();
   receivedResult = true;
 
-  constructor(public service: AuthenticationServiceService, private router: Router) { }
+  constructor(public service: AuthenticationServiceService, private router: Router, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     if (localStorage.getItem('token')) {
@@ -48,10 +50,12 @@ export class LoginComponent implements OnInit {
         },
         err => {
           this.receivedResult = true;
-          console.log(err.error);
-          alert(
-            "Sorry we could not found you, please check if username and password are correct."
-          );
+          const dialogRef = this.dialog.open(InfoDialogComponent, {
+            width: "400px", data: {
+              message: err.error,
+              type: "failed"
+            }
+          });
         }
       );
   }

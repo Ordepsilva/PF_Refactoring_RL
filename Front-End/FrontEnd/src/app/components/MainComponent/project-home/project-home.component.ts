@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import * as NeoVis from 'src/app/components/MainComponent/project-home/neovis';
+import * as NeoVis from 'src/app/neovis';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import Cookies from 'js-cookie';
 import { ArticleService } from 'src/app/services/article/article.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { dataService } from 'src/app/services/dataService';

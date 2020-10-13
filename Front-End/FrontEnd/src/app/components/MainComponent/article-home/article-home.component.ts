@@ -6,11 +6,11 @@ import { ArticleDialogComponent } from '../article-dialog/article-dialog.compone
 import { MatDialog } from '@angular/material/dialog';
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component';
 import * as config from 'src/app/configuration/configuration.json';
-import * as NeoVis from 'src/app/components/MainComponent/project-home/neovis';
+import * as NeoVis from 'src/app/neovis';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as fileSaver from 'file-saver/';
-import { element } from 'protractor';
+
 
 @Component({
   selector: 'app-article-home',
