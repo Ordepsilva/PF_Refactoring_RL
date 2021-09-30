@@ -1,2 +1,4 @@
 # PF_Refactoring_RL
-Ferramenta de apoio à revisão de literatura
+My Final degree project about literature review
+
+Using Angular , Node.js and Neo4j.
